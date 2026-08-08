@@ -44,8 +44,8 @@ workflows:
           -configuration Debug \
           -derivedDataPath build/DerivedData \
           -destination 'generic/platform=iOS Simulator' \
-           build
-
+          build
+        
       - name: Package .app for Appetize
         script: |
           cd $CM_BUILD_DIR
