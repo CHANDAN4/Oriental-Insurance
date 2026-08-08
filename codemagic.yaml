@@ -9,7 +9,7 @@ workflows:
       vars:
         XCODE_WORKSPACE: "iosApp/iosApp.xcworkspace"   # adjust to your project
         XCODE_SCHEME: "iosApp"
-        APP_ID: ""   # optional: existing Appetize app id, leave empty for first upload
+        APP_ID: "none"   # optional: existing Appetize app id, leave empty for first upload
       groups:
         - appetize_credentials   # define APPETIZE_API_TOKEN as a secret in Codemagic UI
 
