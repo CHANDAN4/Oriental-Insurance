@@ -1,0 +1,911 @@
+package com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.app.orientalinsurance.data.network.ApiState
+import com.app.orientalinsurance.ui.dashboard.navigations.Dashboards
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.Content
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.ResponseChooseOffice
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.viewmodel.FlightViewModel
+import com.app.orientalinsurance.ui.font.mulishFontFamily
+import com.app.orientalinsurance.ui.login.models.RequestLogin
+import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostController) {
+
+    val response by flightViewModel.responseTravelQuote.collectAsState()
+    val responseChooseOffice by flightViewModel.responseChooseOffice.collectAsState()
+    val responseCreate by flightViewModel.responseCreateFlight.collectAsState()
+
+    var chooseCity by remember { mutableStateOf(flightViewModel.branchOffice?:"") }
+    var policySummary by remember { mutableStateOf(false) }
+
+    var isClick by remember { mutableStateOf(false) }
+    val isEnable by remember(chooseCity) {
+        derivedStateOf {
+            chooseCity.isNotBlank()
+        }
+    }
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var primumBreakup by remember { mutableStateOf(false) }
+    val sheetStatePA = rememberModalBottomSheetState()
+    val scopePA = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        val req = RequestLogin("U2FsdGVkX1+LoHj+8DdtJax5Lrx5hoQHcwFjEedf6B7nUBlHBS1zAYDp+gWglPK3")
+        flightViewModel.travelQuote(req, flightViewModel.id)
+    }
+
+    LaunchedEffect(chooseCity) {
+        val req = RequestLogin("U2FsdGVkX19vne5gYYKPNwQ4FD1DC3UX0eI2AtY3j7dqDKwsXVFB24YNwqkzEeH4")
+        flightViewModel.chooseOffice(req)
+    }
+
+    when (val result = response) {
+
+        is ApiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is ApiState.Success -> {
+            flightViewModel.totalAmt= ""+result.data.finalPremium
+            flightViewModel.basicPreAmt=""+result.data.basicPremium
+            flightViewModel.minPreAmt=""+result.data.minimumPremiumApportionment
+            flightViewModel.gst=""+result.data.gst
+            val req = RequestLogin("U2FsdGVkX19YgvrfTmr3qj4xBvSi6TvfqdJPe7Q+GU0=")
+            flightViewModel.chooseOffice(req)
+        }
+
+        is ApiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = result.message,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        }
+
+        is ApiState.Empty -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Data Not Found",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        }
+
+
+    }
+
+    when (val result = responseCreate) {
+
+        is ApiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is ApiState.Success -> {
+            flightViewModel.branchOffice=chooseCity
+            navController.navigate(Dashboards.FlightDetailsScreen.route)
+        }
+
+        is ApiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = result.message,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        }
+
+        is ApiState.Empty -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Data Not Found",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        }
+
+
+    }
+
+    Scaffold(
+
+        topBar = {
+            Surface(
+                shadowElevation = 8.dp,
+                color = Color(0xFFF2F2FF)
+            ) {
+                TopAppBar(
+                    title = {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
+                                text = "Flight Coupon Policy",
+                                textAlign = TextAlign.Left,
+                                fontFamily = mulishFontFamily(),
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color.Black,
+                                fontSize = 18.sp
+                            )
+                            Text(
+                                modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
+                                    .clickable {
+                                        policySummary = true
+                                    },
+                                text = "Policy Summary",
+                                textAlign = TextAlign.Left,
+                                fontFamily = mulishFontFamily(),
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 14.sp,
+                                color = Color(0xFFC85100)
+                            )
+                        }
+
+                    },
+                    navigationIcon = {
+
+                        IconButton(
+                            onClick = {
+                                navController.navigateUp()
+                            }
+                        ) {
+                            Icon(
+                                Icons.Default.ArrowBack,
+                                contentDescription = "Back"
+                            )
+                        }
+
+                    }
+                )
+            }
+
+        },
+
+        bottomBar = {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(
+                    topStart = 20.dp,
+                    topEnd = 20.dp
+                ),
+                shadowElevation = 10.dp,
+                color = Color.White
+            ) {
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(
+                        horizontal = 15.dp,
+                        vertical = 15.dp
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Column(
+                        modifier = Modifier.weight(1f).clickable{
+                            primumBreakup=true
+                        }
+                    ) {
+
+                        Text(
+                            text = "₹ ${flightViewModel.totalAmt}",
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(Modifier.height(4.dp))
+
+                        Text(
+                            text = "View Premium Breakup",
+                            color = Color(0xFFC46A09),
+                            textDecoration = TextDecoration.Underline,
+                            fontSize = 15.sp
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+
+                            val req= RequestLogin("U2FsdGVkX1+8BxPQppxFXgGM4s2zo/DKmP7A2ZQ2n+WfIUg++VKuNFweN/+AV0rx/4jtm4NghiwEBBhlQNFvD8Vcw9aLs35V7dfMszrhqNUY1sMrr9G9fTjns0907OVWBqXY0WeYGI4x1v09ckNrmMk3yAqAmpHmnukCM8iwqRr5TI6VZ7qo0b1jPqH98J9GSCW+q9I3kZv7M6c/dS2bAe5+S7taM10e2yh6dg5Oktry4ShnxB4oeGHL27LUjwnBCDfAoF1SUxXNYcOkN27mRHKH/D/CtmOtdbRHqqzXT4uRJoMIZbCcgZ3iQ8FrRKaY4/DoI62nGMPqY1KaaMMY1OYt78DZKKhXb0v2Msu2o7rzMUI408wCI/3lk/LFY/BDS5hO7MVgxoeiusROcDIfaQ==")
+                            flightViewModel.create(req,flightViewModel.id)
+                        },
+                        modifier = Modifier.width(150.dp)
+                            .height(50.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFC85A00)
+                        )
+                    ) {
+
+                        Text(
+                            "Continue",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Bold
+                        )
+
+                    }
+                }
+            }
+        }
+
+    ) { padding ->
+
+        Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2FF)).padding(padding)) {
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(
+                modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
+                text = "Choose Office",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Left,
+                color = Color.Black,
+                fontSize = 18.sp
+            )
+            Spacer(modifier = Modifier.height(50.dp))
+
+
+            when (val res=responseChooseOffice) {
+
+                is ApiState.Success -> {
+
+                    val content = (res as ApiState.Success).data.content
+                    BranchSearchField(content, onBranchSelected = {
+                        chooseCity = it.officeCity
+                        flightViewModel.branchOffice=it.officeCity
+                    })
+
+                }
+
+                is ApiState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(top = 250.dp),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                is ApiState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = res.message,
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Normal,
+                        )
+                    }
+                }
+
+                else -> {
+
+                }
+            }
+
+
+            if (chooseCity.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(20.dp))
+                OutlinedTextField(
+                    value = chooseCity,
+                    onValueChange = { chooseCity = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp),
+
+                    // Hint
+                    placeholder = {
+                        Text(
+                            buildAnnotatedString {
+                                append("Branch Address ")
+                                withStyle(
+                                    style = SpanStyle(color = Color.Red)
+                                ) {
+                                    append("")
+                                }
+                            },
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Normal
+                        )
+                    },
+
+                    // Floating label
+                    label = {
+                        Text(
+                            buildAnnotatedString {
+                                append("Branch Address ")
+                                withStyle(
+                                    style = SpanStyle(color = Color.Red)
+                                ) {
+                                    append("")
+                                }
+                            },
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Normal
+                        )
+                    },
+
+                    singleLine = true,
+
+                    shape = RoundedCornerShape(12.dp),
+
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            // Handle Done
+                        }
+                    ),
+
+                    colors = OutlinedTextFieldDefaults.colors(
+
+                        // Background
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color(0xFFF5F5F5),
+
+                        // Border
+                        focusedBorderColor = Color(0xFFC85100),
+                        unfocusedBorderColor = Color.Gray,
+
+                        // Cursor
+                        cursorColor = Color(0xFFC85100),
+
+                        // Text
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+
+                        // Label
+                        focusedLabelColor = Color(0xFFC85100),
+                        unfocusedLabelColor = Color.Gray,
+
+                        // Placeholder
+                        focusedPlaceholderColor = Color.LightGray,
+                        unfocusedPlaceholderColor = Color.LightGray
+                    )
+                )
+            }
+
+            if (policySummary) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        scope.launch {
+                            sheetState.hide()
+                            policySummary = false
+                        }
+                    },
+                    sheetState = sheetState,
+                    shape = RoundedCornerShape(
+                        topStart = 24.dp,
+                        topEnd = 24.dp
+                    )
+                ) {
+                    PolicySummaryChooseOffice(flightViewModel)
+                }
+
+            }
+
+            if (primumBreakup) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        scopePA.launch {
+                            sheetStatePA.hide()
+                            primumBreakup = false
+                        }
+                    },
+                    sheetState = sheetStatePA,
+                    shape = RoundedCornerShape(
+                        topStart = 24.dp,
+                        topEnd = 24.dp
+                    )
+                ) {
+                    PrimumSummaryChooseOffice(flightViewModel)
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BranchSearchField(
+    branches: List<Content>,
+    onBranchSelected: (Content) -> Unit
+) {
+
+    var query by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+
+    val filtered = remember(query) {
+        if (query.isBlank()) {
+            branches
+        } else {
+            branches.filter {
+                it.officeCity.contains(query, true) ||
+                        it.code.contains(query)
+            }
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp)) {
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }
+        ) {
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth(),
+                value = query,
+                shape = RoundedCornerShape(12.dp),
+                onValueChange = {
+                    query = it
+                    expanded = true
+                },
+                label = {
+                    Text("Branch Code / Name / City",
+                        fontFamily = mulishFontFamily(),
+                        fontWeight = FontWeight.Normal
+                        )
+                },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded)
+                }
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded && filtered.isNotEmpty(),
+                onDismissRequest = {
+                    expanded = false
+                }
+            ) {
+
+                filtered.forEach { branch ->
+
+                    DropdownMenuItem(
+                        text = {
+                            Column {
+
+                                Text(
+                                    "${branch.code} : ${branch.officeCity}",
+                                    fontFamily = mulishFontFamily(),
+                                    fontWeight = FontWeight.Normal
+                                )
+                                Spacer(modifier = Modifier.height(5.dp))
+                                Text(
+                                    branch.address,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontFamily = mulishFontFamily(),
+                                    fontWeight = FontWeight.Normal
+                                )
+
+                            }
+                        },
+                        onClick = {
+
+                            query = "${branch.code} : ${branch.officeCity}"
+
+                            expanded = false
+
+                            onBranchSelected(branch)
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+}
+
+
+@Composable
+fun PolicySummaryChooseOffice( flightViewModel: FlightViewModel) {
+
+    Column(
+        modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Policy Summary",
+            fontFamily = mulishFontFamily(),
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Left
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = Color(0xFFE0E0E0)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(
+                modifier = Modifier.weight(.5f),
+                text = "Flight From",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                text = ":",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "${flightViewModel.flightFrom}",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(
+                modifier = Modifier.weight(.5f),
+                text = "Flight To",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                text = ":",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "${flightViewModel.flightFrom}",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(
+                modifier = Modifier.weight(.5f),
+                text = "Cover Amount",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                text = ":",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "${flightViewModel.coverAmt}",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(
+                modifier = Modifier.weight(.5f),
+                text = "Branch Address",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                text = ":",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "${flightViewModel.branchOffice}",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(
+                modifier = Modifier.weight(.5f),
+                text = "Choose Office",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                text = ":",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "Noida,Sector 58 ,Block 20 F",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+
+@Composable
+fun PrimumSummaryChooseOffice( flightViewModel: FlightViewModel) {
+
+    Column(
+        modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Premium Breakup",
+            fontFamily = mulishFontFamily(),
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Left
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = Color(0xFFE0E0E0)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(
+                modifier = Modifier.weight(.5f),
+                text = "Basic Premium",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                text = ":",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "${flightViewModel.basicPreAmt}",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(
+                modifier = Modifier.weight(.5f),
+                text = "Minimum Premium Apportionment",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                text = ":",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "${flightViewModel.minPreAmt}",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(
+                modifier = Modifier.weight(.5f),
+                text = "GST",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                text = ":",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "${flightViewModel.gst}",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = Color.LightGray
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(
+                modifier = Modifier.weight(.5f),
+                text = "Total Amount",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                text = ":",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "${flightViewModel.totalAmt}",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = Color.LightGray
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
