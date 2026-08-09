@@ -27,6 +27,11 @@ workflows:
           chmod +x ./gradlew
           ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
 
+      - name: Check generated framework
+        script: |
+          echo "Searching for shared.framework..."
+          find . -name "shared.framework" -print
+    
       - name: Package .app for Appetize
         script: |
           cd $CM_BUILD_DIR
