@@ -22,17 +22,10 @@ workflows:
           cd $CM_BUILD_DIR
           ./gradlew :shared:tasks --all | grep -i framework
 
-      - name: Build iOS app for simulator
+      - name: Build KMP iOS Simulator Framework
         script: |
-          cd $CM_BUILD_DIR
-          xcodebuild \
-            -project "iosApp/iosApp.xcodeproj" \
-            -scheme "$XCODE_SCHEME" \
-            -sdk iphonesimulator \
-            -configuration Debug \
-            -derivedDataPath build/DerivedData \
-            -destination 'generic/platform=iOS Simulator' \
-            build
+          chmod +x ./gradlew
+          ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
 
       - name: Package .app for Appetize
         script: |
