@@ -23,7 +23,6 @@ workflows:
 
       - name: Find shared framework
         script: |
-          echo "Searching for shared.framework..."
           find . -name "shared.framework" -print
 
       - name: Build iOS app for simulator
