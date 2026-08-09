@@ -17,6 +17,11 @@ workflows:
           cd $CM_BUILD_DIR
           chmod +x gradlew
 
+     - name: List available Gradle tasks
+       script: |
+         cd $CM_BUILD_DIR
+         ./gradlew :shared:tasks --all | grep -i framework
+    
       - name: Build iOS app for simulator
         script: |
           cd $CM_BUILD_DIR
