@@ -15,10 +15,6 @@ workflows:
       - name: Fix Gradle permissions
     script: |
       chmod +x ./gradlew
-
-- name: Find shared framework
-  script: |
-    find . -name "shared.framework" -print
     
   - name: Build KMP iOS Simulator Framework
     script: |
