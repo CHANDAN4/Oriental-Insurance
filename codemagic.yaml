@@ -5,47 +5,30 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       xcode: latest
-      cocoapods: default
       vars:
-        XCODE_WORKSPACE: "iosApp/iosApp.xcworkspace"   # adjust to your project
         XCODE_SCHEME: "iosApp"
-        APP_ID: "none"   # optional: existing Appetize app id, leave empty for first upload
+        APP_ID: "none"   # set to your real Appetize app id once you have one
       groups:
         - appetize_credentials   # define APPETIZE_API_TOKEN as a secret in Codemagic UI
 
     scripts:
-      - name: Set up code signing (not needed for simulator, skip)
-        script: |
-          echo "Simulator build — no signing required"
-
-          - name: Fix gradlew permissions
-            script: |
-            cd $CM_BUILD_DIR
-            chmod +x gradlew
-
-      - name: Build Kotlin Multiplatform shared framework
+      - name: Fix gradlew permissions
         script: |
           cd $CM_BUILD_DIR
-          ./gradlew :shared:embedAndSignAppleFrameworkForXcode -Pkotlin.native.cocoapods.platform=iphonesimulator || \
-          ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
-
-      - name: Install CocoaPods (if used)
-        script: |
-          cd $CM_BUILD_DIR/iosApp
-          pod install || echo "No Podfile found, skipping"
+          chmod +x gradlew
 
       - name: Build iOS app for simulator
         script: |
-         cd $CM_BUILD_DIR
-         xcodebuild \
-          -project "iosApp/iosApp.xcodeproj" \
-          -scheme "$XCODE_SCHEME" \
-          -sdk iphonesimulator \
-          -configuration Debug \
-          -derivedDataPath build/DerivedData \
-          -destination 'generic/platform=iOS Simulator' \
-          build
-        
+          cd $CM_BUILD_DIR
+          xcodebuild \
+            -project "iosApp/iosApp.xcodeproj" \
+            -scheme "$XCODE_SCHEME" \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -derivedDataPath build/DerivedData \
+            -destination 'generic/platform=iOS Simulator' \
+            build
+
       - name: Package .app for Appetize
         script: |
           cd $CM_BUILD_DIR
@@ -56,7 +39,7 @@ workflows:
 
       - name: Upload to Appetize
         script: |
-          if [ -z "$APP_ID" ]; then
+          if [ "$APP_ID" = "none" ]; then
             RESPONSE=$(curl -s -F "file=@$CM_BUILD_DIR/app-simulator.zip" \
               -F "platform=ios" \
               "https://\$APPETIZE_API_TOKEN@api.appetize.io/v1/apps")
