@@ -13,27 +13,27 @@ workflows:
 
     scripts:
       - name: Fix Gradle permissions
-         script: |
+        script: |
           chmod +x ./gradlew
     
-     - name: Build KMP iOS Simulator Framework
-       script: |
+      - name: Build KMP iOS Simulator Framework
+        script: |
           ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
 
-    - name: Find shared framework
-      script: |
-       find . -name "shared.framework" -print
+      - name: Find shared framework
+        script: |
+          find . -name "shared.framework" -print
 
-  - name: Build iOS app for simulator
-    script: |
-      xcodebuild \
-        -project iosApp/iosApp.xcodeproj \
-        -scheme iosApp \
-        -sdk iphonesimulator \
-        -configuration Debug \
-        -destination 'generic/platform=iOS Simulator' \
-        -derivedDataPath build/DerivedData \
-        build
+      - name: Build iOS app for simulator
+        script: |
+          xcodebuild \
+         -project iosApp/iosApp.xcodeproj \
+         -scheme iosApp \
+         -sdk iphonesimulator \
+         -configuration Debug \
+         -destination 'generic/platform=iOS Simulator' \
+         -derivedDataPath build/DerivedData \
+          build
         
 
       - name: Check generated framework
