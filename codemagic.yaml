@@ -16,6 +16,10 @@ workflows:
     script: |
       chmod +x ./gradlew
 
+- name: Find shared framework
+  script: |
+    find . -name "shared.framework" -print
+    
   - name: Build KMP iOS Simulator Framework
     script: |
       ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
