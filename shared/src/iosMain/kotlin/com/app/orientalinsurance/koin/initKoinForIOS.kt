@@ -1,3 +1,4 @@
+@file:JvmName("KoinKt")
 package com.app.orientalinsurance.koin
 
 import com.app.orientalinsurance.data.multiplateformData.iosModule
