@@ -13,11 +13,12 @@ class App : Application(){
     override fun onCreate() {
         super.onCreate()
 
-        startKoin {
+        initKoin(listOf(androidModule))
+        /*startKoin {
             androidContext(this@App)
             modules(appModule,androidModule)
-            //initKoin(listOf(androidModule))
-        }
+
+        }*/
 
     }
 
