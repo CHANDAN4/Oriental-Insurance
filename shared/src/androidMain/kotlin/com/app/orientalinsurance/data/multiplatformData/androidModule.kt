@@ -6,7 +6,11 @@ import com.russhwolf.settings.Settings
 import com.russhwolf.settings.SharedPreferencesSettings
 import org.koin.dsl.module
 
-val androidModule = module {
+fun androidModule(context: Context) = module {
+
+    single<Context> {
+        context
+    }
 
     single<Settings> {
         SharedPreferencesSettings(
