@@ -3,58 +3,81 @@ workflows:
     name: iOS Simulator Build → Appetize
     max_build_duration: 60
     instance_type: mac_mini_m2
+
     environment:
       xcode: latest
       vars:
         XCODE_SCHEME: "iosApp"
-        APP_ID: "none"   # set to your real Appetize app id once you have one
+        APP_ID: "none"
       groups:
-        - appetize_credentials   # define APPETIZE_API_TOKEN as a secret in Codemagic UI
+        - appetize_credentials
 
     scripts:
-      - name: Fix gradlew permissions
+      - name: Fix Gradle permissions
         script: |
-          cd $CM_BUILD_DIR
-          chmod +x gradlew
+          chmod +x ./gradlew
 
-      - name: List available Gradle tasks
+      - name: Build KMP iOS Simulator Framework
         script: |
-          cd $CM_BUILD_DIR
-          ./gradlew :shared:tasks --all | grep -i framework
+          ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
+
+      - name: Find shared framework
+        script: |
+          find . -name "shared.framework" -print
 
       - name: Build iOS app for simulator
         script: |
-          cd $CM_BUILD_DIR
           xcodebuild \
-            -project "iosApp/iosApp.xcodeproj" \
+            -project iosApp/iosApp.xcodeproj \
             -scheme "$XCODE_SCHEME" \
             -sdk iphonesimulator \
             -configuration Debug \
-            -derivedDataPath build/DerivedData \
             -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/DerivedData \
             build
+
+      - name: Check generated framework
+        script: |
+          echo "Searching for shared.framework..."
+          find . -name "shared.framework" -print
 
       - name: Package .app for Appetize
         script: |
-          cd $CM_BUILD_DIR
-          APP_PATH=$(find build/DerivedData/Build/Products -name "*.app" -maxdepth 2 | head -n 1)
-          echo "Found app at $APP_PATH"
+          cd "$CM_BUILD_DIR"
+
+          APP_PATH=$(find build/DerivedData/Build/Products \
+            -maxdepth 2 \
+            -name "*.app" \
+            -print -quit)
+
+          echo "Found app at: $APP_PATH"
+
+          if [ -z "$APP_PATH" ]; then
+            echo "ERROR: No .app found"
+            exit 1
+          fi
+
           cd "$(dirname "$APP_PATH")"
-          zip -r $CM_BUILD_DIR/app-simulator.zip "$(basename "$APP_PATH")"
+
+          zip -r "$CM_BUILD_DIR/app-simulator.zip" \
+            "$(basename "$APP_PATH")"
 
       - name: Upload to Appetize
         script: |
           if [ "$APP_ID" = "none" ]; then
-            RESPONSE=$(curl -s -F "file=@$CM_BUILD_DIR/app-simulator.zip" \
+            RESPONSE=$(curl -s \
+              -F "file=@$CM_BUILD_DIR/app-simulator.zip" \
               -F "platform=ios" \
-              "https://\$APPETIZE_API_TOKEN@api.appetize.io/v1/apps")
+              "https://$APPETIZE_API_TOKEN@api.appetize.io/v1/apps")
           else
-            RESPONSE=$(curl -s -F "file=@$CM_BUILD_DIR/app-simulator.zip" \
+            RESPONSE=$(curl -s \
+              -F "file=@$CM_BUILD_DIR/app-simulator.zip" \
               -F "platform=ios" \
-              "https://\$APPETIZE_API_TOKEN@api.appetize.io/v1/apps/$APP_ID")
+              "https://$APPETIZE_API_TOKEN@api.appetize.io/v1/apps/$APP_ID")
           fi
+
           echo "$RESPONSE"
-          echo "$RESPONSE" > $CM_BUILD_DIR/appetize_response.json
+          echo "$RESPONSE" > "$CM_BUILD_DIR/appetize_response.json"
 
     artifacts:
       - app-simulator.zip
@@ -63,7 +86,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - your-email@example.com   # replace with your email
+          - your-email@example.com
         notify:
           success: true
           failure: true
