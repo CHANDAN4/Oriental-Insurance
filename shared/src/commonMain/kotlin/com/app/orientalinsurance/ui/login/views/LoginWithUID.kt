@@ -229,7 +229,7 @@ fun LoginWithUID(loginViewModel: LoginViewModel, navController: NavController){
         )
 
         Spacer(modifier = Modifier.height(100.dp))
-       /* OutlinedTextField(
+        OutlinedTextField(
             value = userName,
             onValueChange = { userName = it },
 
@@ -410,7 +410,7 @@ fun LoginWithUID(loginViewModel: LoginViewModel, navController: NavController){
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier.padding(start = 20.dp, top = 4.dp)
             )
-        }*/
+        }
         Spacer(modifier = Modifier.height(50.dp))
 
         Button(
