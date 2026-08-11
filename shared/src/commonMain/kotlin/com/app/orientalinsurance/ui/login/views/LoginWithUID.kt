@@ -68,8 +68,8 @@ import com.app.orientalinsurance.utils.SetStatusBarColor
 fun LoginWithUID(loginViewModel: LoginViewModel, navController: NavController){
 
 
-    var userName by remember { mutableStateOf("") }
-    var pwd by remember { mutableStateOf("") }
+    var userName by remember { mutableStateOf("hh") }
+    var pwd by remember { mutableStateOf("iii") }
     var isClick by remember { mutableStateOf(false) }
 
     val response by loginViewModel.responseLogin.collectAsState()
@@ -229,7 +229,7 @@ fun LoginWithUID(loginViewModel: LoginViewModel, navController: NavController){
         )
 
         Spacer(modifier = Modifier.height(100.dp))
-        OutlinedTextField(
+       /* OutlinedTextField(
             value = userName,
             onValueChange = { userName = it },
 
@@ -410,7 +410,7 @@ fun LoginWithUID(loginViewModel: LoginViewModel, navController: NavController){
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier.padding(start = 20.dp, top = 4.dp)
             )
-        }
+        }*/
         Spacer(modifier = Modifier.height(50.dp))
 
         Button(
@@ -425,7 +425,6 @@ fun LoginWithUID(loginViewModel: LoginViewModel, navController: NavController){
                     val requestLogin= RequestLogin("U2FsdGVkX1/020ollVffpCMXhKWDFAPJZKgWsA2kL6Vg1gO+wEl+Eij51umt5DSqRkIAs3u+Uu9oDHMr3QvOcluVu5GPRLsl4It4xAxnpEfvPtdDiTtGxUATMHsTcXUs")
                     loginViewModel.toLogin(requestLogin)
                 }
-                
             },
             shape = RoundedCornerShape(15)
         ) {
