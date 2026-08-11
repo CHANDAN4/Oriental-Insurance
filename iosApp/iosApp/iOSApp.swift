@@ -1,5 +1,6 @@
 import SwiftUI
 import shared
+import OrientalInsurance
 
 @main
 struct iOSApp: App {
