@@ -47,10 +47,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.app.orientalinsurance.data.network.ApiState
 import com.app.orientalinsurance.ui.dashboard.navigations.Dashboards
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestBasicDetails
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.viewmodel.FlightViewModel
 import com.app.orientalinsurance.ui.font.mulishFontFamily
 import com.app.orientalinsurance.ui.login.models.RequestLogin
 import com.app.orientalinsurance.ui.login.views.VerifyOtpBottomSheetFP
+import kotlin.collections.emptyList
 
 @Composable
 fun PolicyDetailsScreen(flightViewModel: FlightViewModel, navController: NavHostController) {
@@ -341,8 +343,36 @@ fun PolicyDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
                 ),
                 onClick = {
                     isClick=true
-                    val req= RequestLogin("U2FsdGVkX19XiLiJRipSmKmKT9vWjF1O3+U+an/PF56AnECWYL/w2+cQybsBb7Lo7Sy7ypEqA8pC0zbSBcyag7BTQFjzvMv+O5AKvemS5QGjRkBbtnded9NdMYGXwlA/MglE31HitpV4l+q+DqjxL3IKJU/VdWREYVm8/Bfvivz5mC2jx8I6lvfgt8BVMQDBOwWex9R55Vu+nJRmHCJ2EDllbzrmvA5pyAvW/nVtkxiIwOPqCSZ5eFBsmYsGPmKoBJ/52BoqjSNHThUOhPHaLp4MrKLkQk9tq+bivq4GKvCgN3ZAtfIkF7Wl23mYJumetGyUcirDEJu6FKNcAk68J4n8L3Fifm/O6ClZhjVqTMGzc2wmng32RCPki0LPPiCNYA2j1ZRz+MJT/7IiwSiWtWvCNYzz/wJFp+p6nXeCtzTEIFeyLFLUI0QzqvZtHgw/2A5I6kVLzD37C2iOZGoPoa6sFKByzwL6Xz4X5c51SamUgjQ6zH7JzwQ6CSEqo9eiZ0GcactX0aqOl5V3AE+piaVUxcqLRJD8O870217zdCp4GElL9N/oV6LrydsGERPza1bYY37198ufQ8Ftx4wu7CMrbzrHb9B2vDFCLWuV5EEdCjyiGjDwJjP2HUd6SkVOgQemsSFqA5oQNuEdpdJSiQ==")
-                    flightViewModel.basicDetails(req)
+                    var requestBasicDetails= RequestBasicDetails(
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        emptyList(),
+                        flightFrom,
+                        flightTo,
+                        "",
+                        "",
+                        1,
+                        "",
+                        "FLIGHT",
+                        "",
+                        "",
+                        null,
+                        "",
+                        "",
+                        null,
+                        "OverseasDetails",
+                        "",
+                        "30",
+                        3,
+                        "",
+                        null
+                    )
+
+                    //val req= RequestLogin("U2FsdGVkX19XiLiJRipSmKmKT9vWjF1O3+U+an/PF56AnECWYL/w2+cQybsBb7Lo7Sy7ypEqA8pC0zbSBcyag7BTQFjzvMv+O5AKvemS5QGjRkBbtnded9NdMYGXwlA/MglE31HitpV4l+q+DqjxL3IKJU/VdWREYVm8/Bfvivz5mC2jx8I6lvfgt8BVMQDBOwWex9R55Vu+nJRmHCJ2EDllbzrmvA5pyAvW/nVtkxiIwOPqCSZ5eFBsmYsGPmKoBJ/52BoqjSNHThUOhPHaLp4MrKLkQk9tq+bivq4GKvCgN3ZAtfIkF7Wl23mYJumetGyUcirDEJu6FKNcAk68J4n8L3Fifm/O6ClZhjVqTMGzc2wmng32RCPki0LPPiCNYA2j1ZRz+MJT/7IiwSiWtWvCNYzz/wJFp+p6nXeCtzTEIFeyLFLUI0QzqvZtHgw/2A5I6kVLzD37C2iOZGoPoa6sFKByzwL6Xz4X5c51SamUgjQ6zH7JzwQ6CSEqo9eiZ0GcactX0aqOl5V3AE+piaVUxcqLRJD8O870217zdCp4GElL9N/oV6LrydsGERPza1bYY37198ufQ8Ftx4wu7CMrbzrHb9B2vDFCLWuV5EEdCjyiGjDwJjP2HUd6SkVOgQemsSFqA5oQNuEdpdJSiQ==")
+                    flightViewModel.basicDetails(requestBasicDetails)
 
                 },
                 shape = RoundedCornerShape(15)

@@ -1,15 +1,18 @@
 package com.app.orientalinsurance.ui.login.repository
+import com.app.orientalinsurance.data.cripto.EncryptionUtil
 import com.app.orientalinsurance.data.network.ApiService
 import com.app.orientalinsurance.data.network.ApiState
+import com.app.orientalinsurance.ui.login.models.RequestCustomerCheckEmailMobile
+import com.app.orientalinsurance.ui.login.models.RequestForgetPassword
+import com.app.orientalinsurance.ui.login.models.RequestLoginWithUserIdRequestModel
 import com.app.orientalinsurance.ui.login.models.RequestLogin
+import com.app.orientalinsurance.ui.login.models.RequestPhoneNumberVerificationOtp
 import com.app.orientalinsurance.ui.login.models.ResponseForgotPassword
 import com.app.orientalinsurance.ui.login.models.ResponseLogin
 import com.app.orientalinsurance.ui.login.models.ResponseSignUp
 import com.app.orientalinsurance.ui.login.models.ResponseVerifyOtp
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 
 
 class LoginRepository (
@@ -17,14 +20,15 @@ class LoginRepository (
 ) {
 
 
-    fun toLogin(requestLogin: RequestLogin) :  Flow<ApiState<ResponseLogin>> = flow {
+    fun toLogin(requestLogin: RequestLoginWithUserIdRequestModel) :  Flow<ApiState<ResponseLogin>> = flow {
 
         emit(ApiState.Loading)
 
         try {
-
-            //val encrypted = Utility().callEncryption(request)
-            val response = apiService.toLogin(requestLogin)
+            val encryptedRequest = EncryptionUtil.callEncryption(requestLogin)
+            val encrypted = RequestLogin(encryptedRequest)
+            println("Api Encription"+encrypted)
+            val response = apiService.toLogin(encrypted)
             emit(ApiState.Success(response))
 
         } catch (e: Exception) {
@@ -35,14 +39,14 @@ class LoginRepository (
 
 
 
-    fun toSignup(requestLogin: RequestLogin) :  Flow<ApiState<ResponseSignUp>> = flow {
+    fun toSignup(reqSignup: RequestCustomerCheckEmailMobile) :  Flow<ApiState<ResponseSignUp>> = flow {
 
         emit(ApiState.Loading)
 
         try {
 
-            //val encrypted = Utility().callEncryption(request)
-            val response = apiService.toSignup(requestLogin)
+            val encrypted = RequestLogin(EncryptionUtil.callEncryption(reqSignup))
+            val response = apiService.toSignup(encrypted)
             emit(ApiState.Success(response))
 
         } catch (e: Exception) {
@@ -53,14 +57,14 @@ class LoginRepository (
 
 
 
-    fun toForgotPassword(requestLogin: RequestLogin) :  Flow<ApiState<ResponseForgotPassword>> = flow {
+    fun toForgotPassword(req: RequestForgetPassword) :  Flow<ApiState<ResponseForgotPassword>> = flow {
 
         emit(ApiState.Loading)
 
         try {
 
-            //val encrypted = Utility().callEncryption(request)
-            val response = apiService.toForgotPassword(requestLogin)
+            val encrypted = RequestLogin(EncryptionUtil.callEncryption(req))
+            val response = apiService.toForgotPassword(encrypted)
             emit(ApiState.Success(response))
 
         } catch (e: Exception) {
@@ -70,14 +74,14 @@ class LoginRepository (
     }
 
 
-    fun toVerifyOtp(requestLogin: RequestLogin) :  Flow<ApiState<ResponseVerifyOtp>> = flow {
+    fun toVerifyOtp(req: RequestPhoneNumberVerificationOtp) :  Flow<ApiState<ResponseVerifyOtp>> = flow {
 
         emit(ApiState.Loading)
 
         try {
 
-            //val encrypted = Utility().callEncryption(request)
-            val response = apiService.toVerifyOtp(requestLogin)
+            val encrypted = RequestLogin(EncryptionUtil.callEncryption(req))
+            val response = apiService.toVerifyOtp(encrypted)
             emit(ApiState.Success(response))
 
         } catch (e: Exception) {

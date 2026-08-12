@@ -14,7 +14,7 @@ object ApiRoute{
     const val TRAVEL_QUOTE = "proposals/travel-policy-flight/quote"
     const val BRANCH_OFFICE = "others/common/branch-office"
 
-    const val CREATE_FLIGHT = "others/common/branch-office"
+    const val CREATE_FLIGHT = "proposals/travel-policy-flight/create"
 
     const val SAVE_DATA = "proposals/travel-policy-flight/save-dates"
 

@@ -72,6 +72,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.app.orientalinsurance.data.network.ApiState
 import com.app.orientalinsurance.ui.font.mulishFontFamily
+import com.app.orientalinsurance.ui.login.models.RequestCustomerCheckEmailMobile
 import com.app.orientalinsurance.ui.login.models.RequestLogin
 import com.app.orientalinsurance.ui.login.navigation.Login
 import com.app.orientalinsurance.ui.login.viewModel.LoginViewModel
@@ -947,8 +948,9 @@ fun SignupScreen(loginViewModel: LoginViewModel, navController: NavController){
             onClick = {
                 isClick=true
                 if(email.isNotEmpty() && mobileNo.isNotEmpty()&&firstName.isNotEmpty()&&lastName.isNotEmpty()&&pwd.isNotEmpty()&&confirmPwd.isNotEmpty()){
-                    val requestLogin= RequestLogin("U2FsdGVkX18LvV9MWIocXcKNUAJAhpzhaHrMpnhguM1sGkPk2c4cycJhlLhBjljcofHHkFvkuvDymi60V494zoIoL/gwtQ5yPt2NSduSFVxg/2euZcgP8r2hmaxVkvAv")
-                    loginViewModel.toSignup(requestLogin)
+                    val req= RequestCustomerCheckEmailMobile(emailId = email, mobileNumber = mobileNo)
+                    //val requestLogin= RequestLogin("U2FsdGVkX18LvV9MWIocXcKNUAJAhpzhaHrMpnhguM1sGkPk2c4cycJhlLhBjljcofHHkFvkuvDymi60V494zoIoL/gwtQ5yPt2NSduSFVxg/2euZcgP8r2hmaxVkvAv")
+                    loginViewModel.toSignup(req)
                 }
             },
             shape = RoundedCornerShape(15)

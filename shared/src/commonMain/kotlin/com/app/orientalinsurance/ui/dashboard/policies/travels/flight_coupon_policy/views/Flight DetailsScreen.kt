@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.app.orientalinsurance.data.network.ApiState
 import com.app.orientalinsurance.ui.dashboard.navigations.Dashboards
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestSaveDate
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.viewmodel.FlightViewModel
 import com.app.orientalinsurance.ui.font.mulishFontFamily
 import com.app.orientalinsurance.ui.login.models.RequestLogin
@@ -235,7 +236,8 @@ fun FlightDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
                     Button(
                         onClick = {
                             navController.navigate(Dashboards.ProposerDetailsScreen.route)
-                            val req= RequestLogin("U2FsdGVkX1/UkwQ87EWihuPCvvLthWyMsW7cu0L9ug5mGdm2fhHoMFAU+h4NdNdqFLR0C/Ht4giuV2oqFgQ5gstyVC/+RxErrjTKykWvZlw=")
+                            val req=RequestSaveDate(selectedDateOfTravel)
+                            //val req= RequestLogin("U2FsdGVkX1/UkwQ87EWihuPCvvLthWyMsW7cu0L9ug5mGdm2fhHoMFAU+h4NdNdqFLR0C/Ht4giuV2oqFgQ5gstyVC/+RxErrjTKykWvZlw=")
                             flightViewModel.saveData(req,flightViewModel.id)
                         },
                         modifier = Modifier

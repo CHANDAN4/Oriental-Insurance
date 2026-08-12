@@ -4,7 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.orientalinsurance.data.multiplateformData.SettingsManager
 import com.app.orientalinsurance.data.network.ApiState
+import com.app.orientalinsurance.ui.login.models.RequestCustomerCheckEmailMobile
+import com.app.orientalinsurance.ui.login.models.RequestForgetPassword
+import com.app.orientalinsurance.ui.login.models.RequestLoginWithUserIdRequestModel
 import com.app.orientalinsurance.ui.login.models.RequestLogin
+import com.app.orientalinsurance.ui.login.models.RequestPhoneNumberVerificationOtp
 import com.app.orientalinsurance.ui.login.models.ResponseForgotPassword
 import com.app.orientalinsurance.ui.login.models.ResponseLogin
 import com.app.orientalinsurance.ui.login.models.ResponseSignUp
@@ -23,7 +27,7 @@ class LoginViewModel(val repository: LoginRepository,val settingsManager: Settin
     val responseLogin : StateFlow<ApiState<ResponseLogin>> = responseLogin_
 
 
-    fun toLogin(requestLogin: RequestLogin) {
+    fun toLogin(requestLogin: RequestLoginWithUserIdRequestModel) {
 
         viewModelScope.launch {
             repository?.toLogin(requestLogin)
@@ -45,7 +49,7 @@ class LoginViewModel(val repository: LoginRepository,val settingsManager: Settin
     val responseSignUp : StateFlow<ApiState<ResponseSignUp>> = responseSignUp_
 
 
-    fun toSignup(requestLogin: RequestLogin) {
+    fun toSignup(requestLogin: RequestCustomerCheckEmailMobile) {
 
         viewModelScope.launch {
             repository?.toSignup(requestLogin)
@@ -66,10 +70,10 @@ class LoginViewModel(val repository: LoginRepository,val settingsManager: Settin
     val responseForgotPassword : StateFlow<ApiState<ResponseForgotPassword>> = responseForgotPassword_
 
 
-    fun toForgotPassword(requestLogin: RequestLogin) {
+    fun toForgotPassword(req: RequestForgetPassword) {
 
         viewModelScope.launch {
-            repository?.toForgotPassword(requestLogin)
+            repository?.toForgotPassword(req)
                 ?.catch { e ->
                     println("ERROR: ${e.message}")
                 }
@@ -87,7 +91,7 @@ class LoginViewModel(val repository: LoginRepository,val settingsManager: Settin
     val responseVerifyOtp : StateFlow<ApiState<ResponseVerifyOtp>> = responseVerifyOtp_
 
 
-    fun toVerifyOtp(requestLogin: RequestLogin) {
+    fun toVerifyOtp(requestLogin: RequestPhoneNumberVerificationOtp) {
 
         viewModelScope.launch {
             repository?.toVerifyOtp(requestLogin)

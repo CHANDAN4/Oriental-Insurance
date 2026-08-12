@@ -63,11 +63,15 @@ import androidx.navigation.NavHostController
 import com.app.orientalinsurance.data.network.ApiState
 import com.app.orientalinsurance.ui.dashboard.navigations.Dashboards
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.Content
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestBranchOffice
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestProposalCreate
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestProposalQuote
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.ResponseChooseOffice
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.viewmodel.FlightViewModel
 import com.app.orientalinsurance.ui.font.mulishFontFamily
 import com.app.orientalinsurance.ui.login.models.RequestLogin
 import kotlinx.coroutines.launch
+import kotlin.text.get
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +81,7 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
     val responseChooseOffice by flightViewModel.responseChooseOffice.collectAsState()
     val responseCreate by flightViewModel.responseCreateFlight.collectAsState()
 
-    var chooseCity by remember { mutableStateOf(flightViewModel.branchOffice?:"") }
+    var chooseCity by remember { mutableStateOf(flightViewModel.branchOffice ?: "") }
     var policySummary by remember { mutableStateOf(false) }
 
     var isClick by remember { mutableStateOf(false) }
@@ -93,12 +97,14 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
     val scopePA = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        val req = RequestLogin("U2FsdGVkX1+LoHj+8DdtJax5Lrx5hoQHcwFjEedf6B7nUBlHBS1zAYDp+gWglPK3")
+        val req = RequestProposalQuote(flightViewModel.coverAmt?.toInt() ?: 0)
+        //val req = RequestLogin("U2FsdGVkX1+LoHj+8DdtJax5Lrx5hoQHcwFjEedf6B7nUBlHBS1zAYDp+gWglPK3")
         flightViewModel.travelQuote(req, flightViewModel.id)
     }
 
     LaunchedEffect(chooseCity) {
-        val req = RequestLogin("U2FsdGVkX19vne5gYYKPNwQ4FD1DC3UX0eI2AtY3j7dqDKwsXVFB24YNwqkzEeH4")
+        //val req = RequestLogin("U2FsdGVkX19vne5gYYKPNwQ4FD1DC3UX0eI2AtY3j7dqDKwsXVFB24YNwqkzEeH4")
+        val req = RequestBranchOffice(chooseCity)
         flightViewModel.chooseOffice(req)
     }
 
@@ -114,12 +120,10 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
         }
 
         is ApiState.Success -> {
-            flightViewModel.totalAmt= ""+result.data.finalPremium
-            flightViewModel.basicPreAmt=""+result.data.basicPremium
-            flightViewModel.minPreAmt=""+result.data.minimumPremiumApportionment
-            flightViewModel.gst=""+result.data.gst
-            val req = RequestLogin("U2FsdGVkX19YgvrfTmr3qj4xBvSi6TvfqdJPe7Q+GU0=")
-            flightViewModel.chooseOffice(req)
+            flightViewModel.totalAmt = "" + result.data.finalPremium
+            flightViewModel.basicPreAmt = "" + result.data.basicPremium
+            flightViewModel.minPreAmt = "" + result.data.minimumPremiumApportionment
+            flightViewModel.gst = "" + result.data.gst
         }
 
         is ApiState.Error -> {
@@ -163,7 +167,7 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
         }
 
         is ApiState.Success -> {
-            flightViewModel.branchOffice=chooseCity
+            flightViewModel.branchOffice = chooseCity
             navController.navigate(Dashboards.FlightDetailsScreen.route)
         }
 
@@ -269,8 +273,8 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
                 ) {
 
                     Column(
-                        modifier = Modifier.weight(1f).clickable{
-                            primumBreakup=true
+                        modifier = Modifier.weight(1f).clickable {
+                            primumBreakup = true
                         }
                     ) {
 
@@ -292,9 +296,16 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
 
                     Button(
                         onClick = {
-
-                            val req= RequestLogin("U2FsdGVkX1+8BxPQppxFXgGM4s2zo/DKmP7A2ZQ2n+WfIUg++VKuNFweN/+AV0rx/4jtm4NghiwEBBhlQNFvD8Vcw9aLs35V7dfMszrhqNUY1sMrr9G9fTjns0907OVWBqXY0WeYGI4x1v09ckNrmMk3yAqAmpHmnukCM8iwqRr5TI6VZ7qo0b1jPqH98J9GSCW+q9I3kZv7M6c/dS2bAe5+S7taM10e2yh6dg5Oktry4ShnxB4oeGHL27LUjwnBCDfAoF1SUxXNYcOkN27mRHKH/D/CtmOtdbRHqqzXT4uRJoMIZbCcgZ3iQ8FrRKaY4/DoI62nGMPqY1KaaMMY1OYt78DZKKhXb0v2Msu2o7rzMUI408wCI/3lk/LFY/BDS5hO7MVgxoeiusROcDIfaQ==")
-                            flightViewModel.create(req,flightViewModel.id)
+                            val request = RequestProposalCreate(
+                                branchAddress = flightViewModel?.branchAddress ?: "",
+                                branchEmail = flightViewModel?.branchEmail ?: "",
+                                branchOffice = flightViewModel?.branchOffice ?: "",
+                                branchOfficeId = flightViewModel?.branchOfficeId ?: "",
+                                officeCity = flightViewModel?.officeCity ?: "",
+                                saveProposalFlag = false,
+                                branchState = flightViewModel?.branchState ?: "",
+                            )
+                            flightViewModel.create(request, flightViewModel.id)
                         },
                         modifier = Modifier.width(150.dp)
                             .height(50.dp),
@@ -333,15 +344,26 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
             Spacer(modifier = Modifier.height(50.dp))
 
 
-            when (val res=responseChooseOffice) {
+            when (val res = responseChooseOffice) {
 
                 is ApiState.Success -> {
 
+
                     val content = (res as ApiState.Success).data.content
-                    BranchSearchField(content, onBranchSelected = {
-                        chooseCity = it.officeCity
-                        flightViewModel.branchOffice=it.officeCity
-                    })
+                    BranchSearchField(
+                        content,
+                        onBranchSelected = {
+                            chooseCity = it.officeCity
+                            flightViewModel.branchOffice = it.description
+                            flightViewModel.branchOfficeId = it.code
+                            flightViewModel.branchAddress = it.address
+                            flightViewModel.branchEmail = it.officeEmail
+                            flightViewModel.branchState = it.stateCode
+                            flightViewModel.branchName = it.description
+                            flightViewModel.branchCode_ = it.description
+                            flightViewModel.officeCity = it.description
+
+                        })
 
                 }
 
@@ -542,10 +564,11 @@ fun BranchSearchField(
                     expanded = true
                 },
                 label = {
-                    Text("Branch Code / Name / City",
+                    Text(
+                        "Branch Code / Name / City",
                         fontFamily = mulishFontFamily(),
                         fontWeight = FontWeight.Normal
-                        )
+                    )
                 },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded)
@@ -598,7 +621,7 @@ fun BranchSearchField(
 
 
 @Composable
-fun PolicySummaryChooseOffice( flightViewModel: FlightViewModel) {
+fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
 
     Column(
         modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(24.dp),
@@ -760,7 +783,7 @@ fun PolicySummaryChooseOffice( flightViewModel: FlightViewModel) {
 
 
 @Composable
-fun PrimumSummaryChooseOffice( flightViewModel: FlightViewModel) {
+fun PrimumSummaryChooseOffice(flightViewModel: FlightViewModel) {
 
     Column(
         modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(24.dp),

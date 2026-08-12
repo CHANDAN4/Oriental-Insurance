@@ -4,6 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.orientalinsurance.data.multiplateformData.SettingsManager
 import com.app.orientalinsurance.data.network.ApiState
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestBasicDetails
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestBranchOffice
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestProposalAdditionalDetails
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestProposalCreate
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestProposalQuote
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestSaveDate
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.ResponseAdditionalDetails
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.ResponseBasicDetails
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.ResponseChooseOffice
@@ -24,6 +30,23 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     var flightTo: String?=null
     var coverAmt: String?=null
     var branchOffice: String?=null
+
+    var branchOfficeId: String? = ""
+    var officeCity: String? = ""
+    var policyTermSelectedDate: String? = null
+    var policyTermEndDate: String? = ""
+    var branchEmail: String? = ""
+    var branchState: String? = null
+    var branchAddress: String? = null
+
+
+    //  var saveProposalNumber: String? = ""
+    var saveProposalFlag: Boolean? = null
+    var branchName: String? = ""
+    var saveProposalNo: String? = ""
+    var panCardFlag: Boolean? = false
+    var branchCode_: String? = ""
+
     var totalAmt: String?=null
     var basicPreAmt: String?=null
     var minPreAmt: String?=null
@@ -37,7 +60,7 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     val responseBasicDetails: StateFlow<ApiState<ResponseBasicDetails>> = responseBasicDetails_
 
 
-    fun basicDetails(requestLogin: RequestLogin) {
+    fun basicDetails(requestLogin: RequestBasicDetails) {
 
         viewModelScope.launch {
             repo?.basicDetails(requestLogin)
@@ -59,7 +82,7 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     val responseTravelQuote: StateFlow<ApiState<ResponseTravelQuote>> = responseTravelQuote_
 
 
-    fun travelQuote(requestLogin: RequestLogin, id: String?) {
+    fun travelQuote(requestLogin: RequestProposalQuote, id: String?) {
 
         viewModelScope.launch {
             repo?.travelQuote(requestLogin,id)
@@ -79,7 +102,7 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     val responseChooseOffice: StateFlow<ApiState<ResponseChooseOffice>> = responseChooseOffice_
 
 
-    fun chooseOffice(requestLogin: RequestLogin) {
+    fun chooseOffice(requestLogin: RequestBranchOffice) {
 
         viewModelScope.launch {
             repo?.branchOffice(requestLogin)
@@ -99,7 +122,7 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     val responseCreateFlight: StateFlow<ApiState<ResponseCreateFlight>> = responseCreateFlight_
 
 
-    fun create(requestLogin: RequestLogin, id: String?) {
+    fun create(requestLogin: RequestProposalCreate, id: String?) {
 
         viewModelScope.launch {
             repo?.create(requestLogin,id)
@@ -120,7 +143,7 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     val responseSaveData: StateFlow<ApiState<ResponseSaveData>> = responseSaveData_
 
 
-    fun saveData(requestLogin: RequestLogin, id: String?) {
+    fun saveData(requestLogin: RequestSaveDate, id: String?) {
 
         viewModelScope.launch {
             repo?.saveData(requestLogin,id)
@@ -141,7 +164,7 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     val responseAdditionalDetails: StateFlow<ApiState<ResponseAdditionalDetails>> = responseAdditionalDetails_
 
 
-    fun additionalDetails(requestLogin: RequestLogin, id: String?) {
+    fun additionalDetails(requestLogin: RequestProposalAdditionalDetails, id: String?) {
 
         viewModelScope.launch {
             repo?.additionalDetails(requestLogin,id)

@@ -57,7 +57,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.app.orientalinsurance.data.network.ApiState
 import com.app.orientalinsurance.ui.font.mulishFontFamily
-import com.app.orientalinsurance.ui.login.models.RequestLogin
+import com.app.orientalinsurance.ui.login.models.RequestLoginWithUserIdRequestModel
 import com.app.orientalinsurance.ui.login.models.ResponseLogin
 import com.app.orientalinsurance.ui.login.navigation.Login
 import com.app.orientalinsurance.ui.login.viewModel.LoginViewModel
@@ -422,7 +422,8 @@ fun LoginWithUID(loginViewModel: LoginViewModel, navController: NavController){
             onClick = {
                 isClick=true
                 if(userName.isNotEmpty() && pwd.isNotEmpty()){
-                    val requestLogin= RequestLogin("U2FsdGVkX1/020ollVffpCMXhKWDFAPJZKgWsA2kL6Vg1gO+wEl+Eij51umt5DSqRkIAs3u+Uu9oDHMr3QvOcluVu5GPRLsl4It4xAxnpEfvPtdDiTtGxUATMHsTcXUs")
+                    //val requestLogin= LoginWithUserIdRequestModel("U2FsdGVkX1/020ollVffpCMXhKWDFAPJZKgWsA2kL6Vg1gO+wEl+Eij51umt5DSqRkIAs3u+Uu9oDHMr3QvOcluVu5GPRLsl4It4xAxnpEfvPtdDiTtGxUATMHsTcXUs")
+                    val requestLogin= RequestLoginWithUserIdRequestModel(userName = userName, password = pwd)
                     loginViewModel.toLogin(requestLogin)
                 }
             },

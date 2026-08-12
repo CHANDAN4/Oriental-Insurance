@@ -69,6 +69,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.app.orientalinsurance.data.network.ApiState
 import com.app.orientalinsurance.ui.font.mulishFontFamily
+import com.app.orientalinsurance.ui.login.models.RequestForgetPassword
 import com.app.orientalinsurance.ui.login.models.RequestLogin
 import com.app.orientalinsurance.ui.login.navigation.Login
 import com.app.orientalinsurance.ui.login.viewModel.LoginViewModel
@@ -429,8 +430,9 @@ fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController)
             onClick = {
                 isClick=true
                 if(userName.isNotEmpty() || mobileNo.isNotEmpty()){
+                    val req= RequestForgetPassword(userName = userName)
                     val requestLogin= RequestLogin("U2FsdGVkX18j1R63juZV1mGUQheWE/lENZspeLxzBjrnlmDIKUNJanE9jX2zf2+P0Igec62KUUmXzzTa5l+qCg==")
-                    loginViewModel.toForgotPassword(requestLogin)
+                    loginViewModel.toForgotPassword(req)
                 }
 
             },

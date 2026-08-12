@@ -1,7 +1,14 @@
 package com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.repository
 
+import com.app.orientalinsurance.data.cripto.EncryptionUtil
 import com.app.orientalinsurance.data.network.ApiService
 import com.app.orientalinsurance.data.network.ApiState
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestBasicDetails
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestBranchOffice
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestProposalAdditionalDetails
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestProposalCreate
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestProposalQuote
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestSaveDate
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.ResponseAdditionalDetails
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.ResponseBasicDetails
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.ResponseChooseOffice
@@ -16,14 +23,14 @@ import kotlinx.coroutines.flow.flow
 class FlightRepository(private val apiService: ApiService) {
 
 
-    fun basicDetails(requestLogin: RequestLogin): Flow<ApiState<ResponseBasicDetails>> = flow {
+    fun basicDetails(req: RequestBasicDetails): Flow<ApiState<ResponseBasicDetails>> = flow {
 
         emit(ApiState.Loading)
 
         try {
 
-            //val encrypted = Utility().callEncryption(request)
-            val response = apiService.basicDetails(requestLogin)
+            val encrypted = RequestLogin(EncryptionUtil.callEncryption(req))
+            val response = apiService.basicDetails(encrypted)
             if (response != null) {
                 //insertModeOfTransit(response)
                 emit(ApiState.Success(response))
@@ -39,15 +46,14 @@ class FlightRepository(private val apiService: ApiService) {
     }
 
 
-    fun travelQuote(requestLogin: RequestLogin, id: String?): Flow<ApiState<ResponseTravelQuote>> =
-        flow {
+    fun travelQuote(req: RequestProposalQuote, id: String?): Flow<ApiState<ResponseTravelQuote>> = flow {
 
             emit(ApiState.Loading)
 
             try {
 
-                //val encrypted = Utility().callEncryption(request)
-                val response = apiService.travelQuote(requestLogin, id)
+                val encrypted = RequestLogin(EncryptionUtil.callEncryption(req))
+                val response = apiService.travelQuote(encrypted, id)
                 if (response != null) {
                     //insertModeOfTransit(response)
                     emit(ApiState.Success(response))
@@ -62,14 +68,14 @@ class FlightRepository(private val apiService: ApiService) {
         }
 
 
-    fun branchOffice(requestLogin: RequestLogin): Flow<ApiState<ResponseChooseOffice>> = flow {
+    fun branchOffice(req: RequestBranchOffice): Flow<ApiState<ResponseChooseOffice>> = flow {
 
         emit(ApiState.Loading)
 
         try {
 
-            //val encrypted = Utility().callEncryption(request)
-            val response = apiService.branchOffice(requestLogin)
+            val encrypted = RequestLogin(EncryptionUtil.callEncryption(req))
+            val response = apiService.branchOffice(encrypted)
             if (response != null) {
                 //insertModeOfTransit(response)
                 emit(ApiState.Success(response))
@@ -84,15 +90,15 @@ class FlightRepository(private val apiService: ApiService) {
     }
 
 
-    fun create(requestLogin: RequestLogin, id: String?): Flow<ApiState<ResponseCreateFlight>> =
+    fun create(req: RequestProposalCreate, id: String?): Flow<ApiState<ResponseCreateFlight>> =
         flow {
 
             emit(ApiState.Loading)
 
             try {
 
-                //val encrypted = Utility().callEncryption(request)
-                val response = apiService.create(requestLogin, id)
+                val encrypted = RequestLogin(EncryptionUtil.callEncryption(req))
+                val response = apiService.create(encrypted, id)
                 emit(ApiState.Success(response))
 
             } catch (e: Exception) {
@@ -102,14 +108,14 @@ class FlightRepository(private val apiService: ApiService) {
         }
 
 
-    fun saveData(requestLogin: RequestLogin, id: String?): Flow<ApiState<ResponseSaveData>> = flow {
+    fun saveData(req: RequestSaveDate, id: String?): Flow<ApiState<ResponseSaveData>> = flow {
 
         emit(ApiState.Loading)
 
         try {
 
-            //val encrypted = Utility().callEncryption(request)
-            val response = apiService.saveData(requestLogin, id)
+            val encrypted = RequestLogin(EncryptionUtil.callEncryption(req))
+            val response = apiService.saveData(encrypted, id)
             emit(ApiState.Success(response))
 
         } catch (e: Exception) {
@@ -119,14 +125,14 @@ class FlightRepository(private val apiService: ApiService) {
     }
 
 
-    fun additionalDetails(requestLogin: RequestLogin, id: String?): Flow<ApiState<ResponseAdditionalDetails>> = flow {
+    fun additionalDetails(request: RequestProposalAdditionalDetails, id: String?): Flow<ApiState<ResponseAdditionalDetails>> = flow {
 
         emit(ApiState.Loading)
 
         try {
 
-            //val encrypted = Utility().callEncryption(request)
-            val response = apiService.additionalDetails(requestLogin, id)
+            val encrypted = RequestLogin(EncryptionUtil.callEncryption(request))
+            val response = apiService.additionalDetails(encrypted, id)
             emit(ApiState.Success(response))
 
         } catch (e: Exception) {
