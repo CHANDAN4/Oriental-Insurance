@@ -68,8 +68,8 @@ import com.app.orientalinsurance.utils.SetStatusBarColor
 fun LoginWithUID(loginViewModel: LoginViewModel, navController: NavController){
 
 
-    var userName by remember { mutableStateOf("hh") }
-    var pwd by remember { mutableStateOf("iii") }
+    var userName by remember { mutableStateOf("") }
+    var pwd by remember { mutableStateOf("") }
     var isClick by remember { mutableStateOf(false) }
 
     val response by loginViewModel.responseLogin.collectAsState()
