@@ -2,6 +2,7 @@ package com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_po
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -92,6 +93,7 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
     }
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
+
     var primumBreakup by remember { mutableStateOf(false) }
     val sheetStatePA = rememberModalBottomSheetState()
     val scopePA = rememberCoroutineScope()
@@ -223,6 +225,7 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
                                 modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
                                     .clickable {
                                         policySummary = true
+                                        primumBreakup = false
                                     },
                                 text = "Policy Summary",
                                 textAlign = TextAlign.Left,
@@ -275,6 +278,7 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
                     Column(
                         modifier = Modifier.weight(1f).clickable {
                             primumBreakup = true
+                            policySummary = false
                         }
                     ) {
 
@@ -649,7 +653,7 @@ fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "Flight From",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -664,6 +668,7 @@ fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.flightFrom}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
@@ -676,7 +681,7 @@ fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "Flight To",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -691,6 +696,7 @@ fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.flightFrom}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
@@ -703,7 +709,7 @@ fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "Cover Amount",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -718,6 +724,7 @@ fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.coverAmt}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
@@ -730,7 +737,7 @@ fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "Branch Address",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -745,6 +752,7 @@ fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.branchOffice}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
@@ -757,7 +765,7 @@ fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "Choose Office",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -773,12 +781,14 @@ fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
                 text = "Noida,Sector 58 ,Block 20 F",
                 color = Color.Gray,
                 fontSize = 14.sp,
+                textAlign = TextAlign.Center,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
     }
+
 }
 
 
@@ -811,7 +821,7 @@ fun PrimumSummaryChooseOffice(flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "Basic Premium",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -827,6 +837,7 @@ fun PrimumSummaryChooseOffice(flightViewModel: FlightViewModel) {
                 text = "${flightViewModel.basicPreAmt}",
                 color = Color.Gray,
                 fontSize = 14.sp,
+                textAlign = TextAlign.Center,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
             )
@@ -838,7 +849,7 @@ fun PrimumSummaryChooseOffice(flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "Minimum Premium Apportionment",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -853,6 +864,7 @@ fun PrimumSummaryChooseOffice(flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.minPreAmt}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
@@ -865,7 +877,7 @@ fun PrimumSummaryChooseOffice(flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "GST",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -880,6 +892,7 @@ fun PrimumSummaryChooseOffice(flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.gst}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
@@ -890,14 +903,14 @@ fun PrimumSummaryChooseOffice(flightViewModel: FlightViewModel) {
             thickness = 1.dp,
             color = Color.LightGray
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "Total Amount",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -913,11 +926,12 @@ fun PrimumSummaryChooseOffice(flightViewModel: FlightViewModel) {
                 text = "${flightViewModel.totalAmt}",
                 color = Color.Gray,
                 fontSize = 14.sp,
+                textAlign = TextAlign.Center,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
             )
         }
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider(
             thickness = 1.dp,
             color = Color.LightGray

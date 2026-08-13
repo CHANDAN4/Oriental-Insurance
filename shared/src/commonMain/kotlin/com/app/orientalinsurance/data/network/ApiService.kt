@@ -68,7 +68,7 @@ class ApiService( private val client: HttpClient) {
             contentType(ContentType.Application.Json)
             header("product", "FLIGHT")
             setBody(request)
-        }.body()
+        }.body<ResponseBasicDetails>()
 
     }
 
@@ -78,7 +78,7 @@ class ApiService( private val client: HttpClient) {
             contentType(ContentType.Application.Json)
             header("product", "FLIGHT")
             setBody(request)
-        }.body()
+        }.body<ResponseTravelQuote>()
 
     }
 
@@ -87,7 +87,7 @@ class ApiService( private val client: HttpClient) {
         return client.post(ApiRoute.BRANCH_OFFICE) {
             contentType(ContentType.Application.Json)
             setBody(request)
-        }.body()
+        }.body<ResponseChooseOffice>()
 
     }
 
@@ -97,7 +97,7 @@ class ApiService( private val client: HttpClient) {
             contentType(ContentType.Application.Json)
             header("product", "FLIGHT")
             setBody(request)
-        }.body()
+        }.body<ResponseCreateFlight>()
 
     }
 
@@ -107,7 +107,7 @@ class ApiService( private val client: HttpClient) {
         return client.patch(ApiRoute.SAVE_DATA+"/$id") {
             contentType(ContentType.Application.Json)
             setBody(request)
-        }.body()
+        }.body<ResponseSaveData>()
 
     }
 
@@ -116,7 +116,7 @@ class ApiService( private val client: HttpClient) {
         return client.patch(ApiRoute.ADDITIONAL_DETAILS+"/$id") {
             contentType(ContentType.Application.Json)
             setBody(request)
-        }.body()
+        }.body<ResponseAdditionalDetails>()
 
     }
 

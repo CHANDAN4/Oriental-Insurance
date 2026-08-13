@@ -139,6 +139,8 @@ fun LoginWithUID(loginViewModel: LoginViewModel, navController: NavController){
             }
 
             is ApiState.Success -> {
+                loginViewModel.settingsManager.saveToken(result.data.token?:"")
+                println( "Token :"+loginViewModel.settingsManager.getToken())
                 loginViewModel.settingsManager.saveEmail(result.data.emailId!!)
                 loginViewModel.settingsManager.saveMobileNo(result.data.mobileNumber)
                 navController.navigate(Login.Dashboard.route) {

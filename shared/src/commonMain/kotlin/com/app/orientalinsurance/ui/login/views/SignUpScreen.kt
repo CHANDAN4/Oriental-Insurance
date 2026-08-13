@@ -315,7 +315,7 @@ fun SignupScreen(loginViewModel: LoginViewModel, navController: NavController){
                 placeholder = {
                     Text(
                         buildAnnotatedString {
-                            append("User ID ")
+                            append("Email ID ")
                             withStyle(
                                 style = SpanStyle(color = Color.Red)
                             ) {
@@ -330,7 +330,7 @@ fun SignupScreen(loginViewModel: LoginViewModel, navController: NavController){
                 label = {
                     Text(
                         buildAnnotatedString {
-                            append("User ID ")
+                            append("Email ID ")
                             withStyle(
                                 style = SpanStyle(color = Color.Red)
                             ) {

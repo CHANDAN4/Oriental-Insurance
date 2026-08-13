@@ -593,7 +593,7 @@ fun FlightDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
 
 
 @Composable
-fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
+fun PremiumSummaryFlightDetails(flightViewModel: FlightViewModel) {
 
     Column(
         modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(24.dp),
@@ -621,7 +621,7 @@ fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "Basic Premium",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -637,6 +637,7 @@ fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
                 text = "${flightViewModel.basicPreAmt}",
                 color = Color.Gray,
                 fontSize = 14.sp,
+                textAlign = TextAlign.Center,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
             )
@@ -648,7 +649,7 @@ fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "Minimum Premium Apportionment",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -663,6 +664,7 @@ fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.minPreAmt}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
@@ -675,7 +677,7 @@ fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "GST",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -690,6 +692,7 @@ fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.gst}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
@@ -700,14 +703,14 @@ fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
             thickness = 1.dp,
             color = Color.LightGray
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
+                modifier = Modifier.weight(1f),
                 text = "Total Amount",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
@@ -723,11 +726,12 @@ fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
                 text = "${flightViewModel.totalAmt}",
                 color = Color.Gray,
                 fontSize = 14.sp,
+                textAlign = TextAlign.Center,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
             )
         }
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider(
             thickness = 1.dp,
             color = Color.LightGray
@@ -742,10 +746,8 @@ fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
-
-
 @Composable
-fun PremiumSummaryFlightDetails( flightViewModel: FlightViewModel) {
+fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
 
     Column(
         modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(24.dp),
@@ -754,7 +756,7 @@ fun PremiumSummaryFlightDetails( flightViewModel: FlightViewModel) {
 
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "Premium Breakup",
+            text = "Policy Summary",
             fontFamily = mulishFontFamily(),
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
@@ -773,8 +775,8 @@ fun PremiumSummaryFlightDetails( flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
-                text = "Basic Premium",
+                modifier = Modifier.weight(1f),
+                text = "Flight From",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp
@@ -788,6 +790,7 @@ fun PremiumSummaryFlightDetails( flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.flightFrom}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
@@ -800,8 +803,8 @@ fun PremiumSummaryFlightDetails( flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
-                text = "Minimum Premium Apportionment",
+                modifier = Modifier.weight(1f),
+                text = "Flight To",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp
@@ -815,6 +818,7 @@ fun PremiumSummaryFlightDetails( flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.flightFrom}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
@@ -827,8 +831,8 @@ fun PremiumSummaryFlightDetails( flightViewModel: FlightViewModel) {
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
-                text = "GST",
+                modifier = Modifier.weight(1f),
+                text = "Cover Amount",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp
@@ -842,25 +846,21 @@ fun PremiumSummaryFlightDetails( flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.coverAmt}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        HorizontalDivider(
-            thickness = 1.dp,
-            color = Color.LightGray
-        )
-        Spacer(modifier = Modifier.height(4.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
             Text(
-                modifier = Modifier.weight(.5f),
-                text = "Total Amount",
+                modifier = Modifier.weight(1f),
+                text = "Branch Address",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp
@@ -874,23 +874,43 @@ fun PremiumSummaryFlightDetails( flightViewModel: FlightViewModel) {
                 modifier = Modifier.weight(1f),
                 text = "${flightViewModel.branchOffice}",
                 color = Color.Gray,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.SemiBold,
             )
         }
-        Spacer(modifier = Modifier.height(4.dp))
-        HorizontalDivider(
-            thickness = 1.dp,
-            color = Color.LightGray
-        )
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "Choose Office",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                text = ":",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "Noida,Sector 58 ,Block 20 F",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
         }
         Spacer(modifier = Modifier.height(16.dp))
     }
+
+
 }
+

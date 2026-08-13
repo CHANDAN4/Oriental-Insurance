@@ -15,7 +15,7 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single { createHttpClient() }
+    single { createHttpClient(get()) }
 
     single { ApiService(get()) }
 

@@ -10,7 +10,7 @@ data class RequestBasicDetails(
     val coverAmount: String? = "",
     val dateOfBirth: String? = "",
     val endDate: String? = "",
-    val familyDetails: List<JsonElement> = emptyList(),
+    val familyDetails: List<String> = emptyList(),
     val flightFrom: String? = "",
     val flightTo: String? = "",
     val gender: String? = "",
@@ -20,14 +20,14 @@ data class RequestBasicDetails(
     val policyType: String? = "",
     val product: String? = "",
     val proposalId: String? = "",
-    val proposalMainResponse: JsonElement? = null,
+    val proposalMainResponse: String? = null,
     val proposalNumber: String? = "",
     val startDate: String? = "",
-    val sumInsured: JsonElement? = null,
+    val sumInsured: String? = null,
     val tabNumber: String? = "",
     val travelMode: String? = "",
     val tripDuration: String? = "",
     val tripDurationInput: Int? = 0,
     val tripType: String? = "",
-    val visitingSchengenCountries: JsonElement? = null
+    val visitingSchengenCountries: String? = null
 )

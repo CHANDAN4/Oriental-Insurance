@@ -37,7 +37,6 @@ class LoginViewModel(val repository: LoginRepository,val settingsManager: Settin
                 ?.collect {
                     responseLogin_.value = it
                     settingsManager.saveIsLogin(true)
-
                 }
         }
 
