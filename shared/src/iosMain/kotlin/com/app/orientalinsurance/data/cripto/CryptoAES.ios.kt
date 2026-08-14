@@ -3,16 +3,12 @@ package com.app.orientalinsurance.data.cripto
 //import platform.CommonCrypto.*
 
 import io.ktor.util.encodeBase64
-import kotlinx.cinterop.CArrayPointer
-import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.UByteVar
-import kotlinx.cinterop.ULongVar
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.alloc
-import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.usePinned
 import kotlinx.cinterop.value
@@ -23,9 +19,9 @@ import platform.CoreCrypto.kCCAlgorithmAES
 import platform.CoreCrypto.kCCEncrypt
 import platform.CoreCrypto.kCCOptionPKCS7Padding
 import platform.CoreCrypto.kCCSuccess
-import platform.Security.SecRandomCopyBytes
-import platform.Security.kSecRandomDefault
+import platform.posix.arc4random_buf
 import platform.posix.size_tVar
+
 
 actual object CryptoAES {
 
@@ -93,20 +89,17 @@ actual object CryptoAES {
     }
 
 
+    @Suppress("DEPRECATION")
     @OptIn(ExperimentalForeignApi::class)
     private fun generateSalt(size: Int): ByteArray {
 
         val salt = ByteArray(size)
 
         salt.usePinned { pinned ->
- 
-            val result = SecRandomCopyBytes(
-                kSecRandomDefault,
-                size.toULong(),
-                pinned.addressOf(0)
+            arc4random_buf(
+                pinned.addressOf(0),
+                size.convert()
             )
-
-            check(result == 0)
         }
 
         return salt
@@ -183,7 +176,6 @@ actual object CryptoAES {
     }
 
 
-
     @Suppress("DEPRECATION")
     @OptIn(ExperimentalForeignApi::class)
     private fun aesEncrypt(
@@ -192,10 +184,13 @@ actual object CryptoAES {
         iv: ByteArray
     ): ByteArray {
 
+        // AES block size = 16
+        // Extra 16 bytes are enough for PKCS7 padding.
         val output = ByteArray(data.size + 16)
 
         return memScoped {
 
+            // Number of bytes written by CCCrypt
             val dataOutMoved = alloc<size_tVar>()
 
             val status = data.usePinned { inputPinned ->
@@ -207,13 +202,34 @@ actual object CryptoAES {
                                 kCCEncrypt,
                                 kCCAlgorithmAES,
                                 kCCOptionPKCS7Padding,
-                                keyPinned.addressOf(0),
+
+                                // key
+                                keyPinned
+                                    .addressOf(0)
+                                    .reinterpret<UByteVar>(),
+
                                 key.size.toULong(),
-                                ivPinned.addressOf(0),
-                                inputPinned.addressOf(0),
+
+                                // IV
+                                ivPinned
+                                    .addressOf(0)
+                                    .reinterpret<UByteVar>(),
+
+                                // input
+                                inputPinned
+                                    .addressOf(0)
+                                    .reinterpret<UByteVar>(),
+
                                 data.size.toULong(),
-                                outputPinned.addressOf(0),
+
+                                // output
+                                outputPinned
+                                    .addressOf(0)
+                                    .reinterpret<UByteVar>(),
+
                                 output.size.toULong(),
+
+                                // output length
                                 dataOutMoved
                             )
                         }
