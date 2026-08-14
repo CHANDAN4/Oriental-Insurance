@@ -68,9 +68,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.app.orientalinsurance.data.network.ApiState
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.viewmodel.FlightViewModel
 import com.app.orientalinsurance.ui.font.mulishFontFamily
 import com.app.orientalinsurance.ui.login.models.RequestForgetPassword
 import com.app.orientalinsurance.ui.login.models.RequestLogin
+import com.app.orientalinsurance.ui.login.models.RequestVerifyOTP
 import com.app.orientalinsurance.ui.login.navigation.Login
 import com.app.orientalinsurance.ui.login.viewModel.LoginViewModel
 import com.app.orientalinsurance.utils.SetStatusBarColor
@@ -161,13 +163,15 @@ fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController)
                     )
                 ) {
                     VerifyOtpBottomSheetFP(
-                        phoneNumber = "+91 98765 43210",
+                        userName,
+                        loginViewModel =loginViewModel ,
+                        phoneNumber = result.data.mobileNumOrEmailId,
                         otp = otp,
                         onOtpChange = { otp = it },
                         onVerify = {
                             navController.navigateUp()
-                            //val requestLogin= RequestLogin("U2FsdGVkX19GgQuPblGQHBhxf5StehjwHGCXUXNhlnMnf/ESdJODEXRNZbbIEeWuK1BXCQahOym1b4zpKz9EGM1ZWR1s0l4cGUpgBsZsNZ8c7He82wbDcHxf/6+haPJF")
-                            //loginViewModel.toVerifyOtp(requestLogin)
+                            val req= RequestVerifyOTP(otp,result.data.transactionId)
+                            loginViewModel.toVerifyOtp(req)
                         },
                         onResend = {
 
@@ -431,7 +435,6 @@ fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController)
                 isClick=true
                 if(userName.isNotEmpty() || mobileNo.isNotEmpty()){
                     val req= RequestForgetPassword(userName = userName)
-                    val requestLogin= RequestLogin("U2FsdGVkX18j1R63juZV1mGUQheWE/lENZspeLxzBjrnlmDIKUNJanE9jX2zf2+P0Igec62KUUmXzzTa5l+qCg==")
                     loginViewModel.toForgotPassword(req)
                 }
 
@@ -453,6 +456,8 @@ fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController)
 
 @Composable
 fun VerifyOtpBottomSheetFP(
+    userName: String,
+    loginViewModel: LoginViewModel,
     phoneNumber: String,
     otp: String,
     onOtpChange: (String) -> Unit,
@@ -461,7 +466,7 @@ fun VerifyOtpBottomSheetFP(
     modifier: Modifier = Modifier
 ) {
 
-    var timeLeft by rememberSaveable { mutableIntStateOf(30) }
+    var timeLeft by rememberSaveable { mutableIntStateOf(120) }
     var isResendEnabled by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -522,15 +527,29 @@ fun VerifyOtpBottomSheetFP(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
-            text = if (isResendEnabled)
-                "You can resend OTP"
-            else
-                "Resend OTP in ${timeLeft}s",
-            color = Color(0xFFC85100),
-            fontFamily = mulishFontFamily(),
-            fontWeight = FontWeight.SemiBold,
-        )
+        if(isResendEnabled){
+            Text(
+                modifier= Modifier.fillMaxWidth().clickable{
+                    val req= RequestForgetPassword(userName = userName)
+                    loginViewModel.toForgotPassword(req)
+                },
+                text = "You can resend OTP",
+                color = Color(0xFFC85100),
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }else{
+            Text(
+                modifier= Modifier.fillMaxWidth().clickable{
+                    val req= RequestForgetPassword(userName = userName)
+                    loginViewModel.toForgotPassword(req)
+                },
+                text =  "Resend OTP in ${timeLeft}s",
+                color = Color(0xFFC85100),
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

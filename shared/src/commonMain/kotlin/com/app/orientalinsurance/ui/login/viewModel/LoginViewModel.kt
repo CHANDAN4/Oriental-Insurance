@@ -9,6 +9,7 @@ import com.app.orientalinsurance.ui.login.models.RequestForgetPassword
 import com.app.orientalinsurance.ui.login.models.RequestLoginWithUserIdRequestModel
 import com.app.orientalinsurance.ui.login.models.RequestLogin
 import com.app.orientalinsurance.ui.login.models.RequestPhoneNumberVerificationOtp
+import com.app.orientalinsurance.ui.login.models.RequestVerifyOTP
 import com.app.orientalinsurance.ui.login.models.ResponseForgotPassword
 import com.app.orientalinsurance.ui.login.models.ResponseLogin
 import com.app.orientalinsurance.ui.login.models.ResponseSignUp
@@ -90,7 +91,7 @@ class LoginViewModel(val repository: LoginRepository,val settingsManager: Settin
     val responseVerifyOtp : StateFlow<ApiState<ResponseVerifyOtp>> = responseVerifyOtp_
 
 
-    fun toVerifyOtp(requestLogin: RequestPhoneNumberVerificationOtp) {
+    fun toVerifyOtp(requestLogin: RequestVerifyOTP) {
 
         viewModelScope.launch {
             repository?.toVerifyOtp(requestLogin)

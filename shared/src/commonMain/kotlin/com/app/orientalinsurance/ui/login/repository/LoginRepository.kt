@@ -7,6 +7,7 @@ import com.app.orientalinsurance.ui.login.models.RequestForgetPassword
 import com.app.orientalinsurance.ui.login.models.RequestLoginWithUserIdRequestModel
 import com.app.orientalinsurance.ui.login.models.RequestLogin
 import com.app.orientalinsurance.ui.login.models.RequestPhoneNumberVerificationOtp
+import com.app.orientalinsurance.ui.login.models.RequestVerifyOTP
 import com.app.orientalinsurance.ui.login.models.ResponseForgotPassword
 import com.app.orientalinsurance.ui.login.models.ResponseLogin
 import com.app.orientalinsurance.ui.login.models.ResponseSignUp
@@ -74,7 +75,7 @@ class LoginRepository (
     }
 
 
-    fun toVerifyOtp(req: RequestPhoneNumberVerificationOtp) :  Flow<ApiState<ResponseVerifyOtp>> = flow {
+    fun toVerifyOtp(req: RequestVerifyOTP) :  Flow<ApiState<ResponseVerifyOtp>> = flow {
 
         emit(ApiState.Loading)
 
