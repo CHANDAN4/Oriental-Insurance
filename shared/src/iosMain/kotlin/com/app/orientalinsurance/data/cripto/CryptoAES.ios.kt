@@ -13,6 +13,7 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
+import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.usePinned
 import kotlinx.cinterop.value
 import platform.CoreCrypto.CCCrypt
@@ -173,7 +174,7 @@ actual object CryptoAES {
                 CC_MD5(
                     input.addressOf(0),
                     data.size.toUInt(),
-                    output.addressOf(0)
+                    output.addressOf(0).reinterpret<UByteVar>()
                 )
             }
         }
