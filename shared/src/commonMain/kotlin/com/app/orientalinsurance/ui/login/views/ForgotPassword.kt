@@ -84,6 +84,7 @@ import kotlinx.coroutines.delay
 fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController){
 
     val response by loginViewModel.responseForgotPassword.collectAsState()
+    val response by loginViewModel.responseForgotPassword.collectAsState()
     var userName by remember { mutableStateOf("") }
     var mobileNo by remember { mutableStateOf("") }
     var isClick by remember { mutableStateOf(false) }
@@ -622,3 +623,167 @@ fun OTPTextFieldFP(
         }
     )
 }
+
+
+@Composable
+fun NewPasswordDialog(
+    onDismiss: () -> Unit,
+    onUpdatePassword: (String) -> Unit
+) {
+    var newPassword by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
+    var newPasswordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
+
+    val passwordsMatch =
+        newPassword.isNotEmpty() &&
+        confirmPassword.isNotEmpty() &&
+        newPassword == confirmPassword
+
+    val isPasswordValid =
+        newPassword.length >= 8
+
+    val isValid =
+        isPasswordValid && passwordsMatch
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+
+        title = {
+            Text(
+                text = "Create New Password",
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+
+                OutlinedTextField(
+                    value = newPassword,
+                    onValueChange = {
+                        newPassword = it
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = {
+                        Text("New Password")
+                    },
+                    singleLine = true,
+                    visualTransformation =
+                        if (newPasswordVisible)
+                            VisualTransformation.None
+                        else
+                            PasswordVisualTransformation(),
+
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                newPasswordVisible =
+                                    !newPasswordVisible
+                            }
+                        ) {
+                            Icon(
+                                imageVector =
+                                    if (newPasswordVisible)
+                                        Icons.Default.Visibility
+                                    else
+                                        Icons.Default.VisibilityOff,
+                                contentDescription =
+                                    if (newPasswordVisible)
+                                        "Hide password"
+                                    else
+                                        "Show password"
+                            )
+                        }
+                    }
+                )
+
+                if (newPassword.isNotEmpty() && !isPasswordValid) {
+                    Text(
+                        text = "Password must contain at least 8 characters",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = {
+                        confirmPassword = it
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = {
+                        Text("Confirm Password")
+                    },
+                    singleLine = true,
+                    visualTransformation =
+                        if (confirmPasswordVisible)
+                            VisualTransformation.None
+                        else
+                            PasswordVisualTransformation(),
+
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                confirmPasswordVisible =
+                                    !confirmPasswordVisible
+                            }
+                        ) {
+                            Icon(
+                                imageVector =
+                                    if (confirmPasswordVisible)
+                                        Icons.Default.Visibility
+                                    else
+                                        Icons.Default.VisibilityOff,
+                                contentDescription =
+                                    if (confirmPasswordVisible)
+                                        "Hide password"
+                                    else
+                                        "Show password"
+                            )
+                        }
+                    },
+
+                    isError =
+                        confirmPassword.isNotEmpty() &&
+                        !passwordsMatch
+                )
+
+                if (
+                    confirmPassword.isNotEmpty() &&
+                    !passwordsMatch
+                ) {
+                    Text(
+                        text = "Passwords do not match",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+        },
+
+        confirmButton = {
+            Button(
+                onClick = {
+                    onUpdatePassword(newPassword)
+                },
+                enabled = isValid
+            ) {
+                Text("Update Password")
+            }
+        },
+
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
