@@ -3,10 +3,14 @@ package com.app.orientalinsurance.data.cripto
 //import platform.CommonCrypto.*
 
 import io.ktor.util.encodeBase64
+import kotlinx.cinterop.CArrayPointer
+import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.UByteVar
 import kotlinx.cinterop.ULongVar
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.usePinned
@@ -20,6 +24,7 @@ import platform.CoreCrypto.kCCOptionPKCS7Padding
 import platform.CoreCrypto.kCCSuccess
 import platform.Security.SecRandomCopyBytes
 import platform.Security.kSecRandomDefault
+import platform.posix.size_tVar
 
 actual object CryptoAES {
 
@@ -161,7 +166,7 @@ actual object CryptoAES {
     @Suppress("DEPRECATION")
     @OptIn(ExperimentalForeignApi::class)
     private fun md5(data: ByteArray): ByteArray {
-        val digest = ByteArray(CC_MD5_DIGEST_LENGTH.toInt())
+        val digest = ByteArray(CC_MD5_DIGEST_LENGTH)
 
         data.usePinned { input ->
             digest.usePinned { output ->
@@ -186,13 +191,11 @@ actual object CryptoAES {
         iv: ByteArray
     ): ByteArray {
 
-        // AES block size = 16
-        // CommonCrypto will handle PKCS7 padding.
         val output = ByteArray(data.size + 16)
 
-        val encryptedLength = memScoped {
+        return memScoped {
 
-            val dataOutMoved = alloc<ULongVar>()
+            val dataOutMoved = alloc<size_tVar>()
 
             val status = data.usePinned { inputPinned ->
                 key.usePinned { keyPinned ->
@@ -210,7 +213,7 @@ actual object CryptoAES {
                                 data.size.toULong(),
                                 outputPinned.addressOf(0),
                                 output.size.toULong(),
-                                dataOutMoved.ptr
+                                dataOutMoved
                             )
                         }
                     }
@@ -221,10 +224,10 @@ actual object CryptoAES {
                 "AES encryption failed. Status: $status"
             }
 
-            dataOutMoved.value.toInt()
-        }
+            val encryptedLength = dataOutMoved.value.toInt()
 
-        return output.copyOf(encryptedLength)
+            output.copyOf(encryptedLength)
+        }
     }
 
 
