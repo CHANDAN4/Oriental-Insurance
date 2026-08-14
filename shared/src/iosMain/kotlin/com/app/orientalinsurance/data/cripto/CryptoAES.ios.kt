@@ -9,6 +9,7 @@ import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.usePinned
 import kotlinx.cinterop.value
@@ -16,6 +17,7 @@ import platform.CoreCrypto.CCCrypt
 import platform.CoreCrypto.CC_MD5
 import platform.CoreCrypto.CC_MD5_DIGEST_LENGTH
 import platform.CoreCrypto.kCCAlgorithmAES
+import platform.CoreCrypto.kCCBlockSizeAES128
 import platform.CoreCrypto.kCCEncrypt
 import platform.CoreCrypto.kCCOptionPKCS7Padding
 import platform.CoreCrypto.kCCSuccess
@@ -184,13 +186,11 @@ actual object CryptoAES {
         iv: ByteArray
     ): ByteArray {
 
-        // AES block size = 16
-        // Extra 16 bytes are enough for PKCS7 padding.
-        val output = ByteArray(data.size + 16)
+        val output = ByteArray(data.size + kCCBlockSizeAES128.toInt())
 
         return memScoped {
 
-            // Number of bytes written by CCCrypt
+            // C: size_t dataOutMoved
             val dataOutMoved = alloc<size_tVar>()
 
             val status = data.usePinned { inputPinned ->
@@ -203,34 +203,18 @@ actual object CryptoAES {
                                 kCCAlgorithmAES,
                                 kCCOptionPKCS7Padding,
 
-                                // key
-                                keyPinned
-                                    .addressOf(0)
-                                    .reinterpret<UByteVar>(),
+                                keyPinned.addressOf(0),
+                                key.size.convert(),
 
-                                key.size.toULong(),
+                                ivPinned.addressOf(0),
 
-                                // IV
-                                ivPinned
-                                    .addressOf(0)
-                                    .reinterpret<UByteVar>(),
+                                inputPinned.addressOf(0),
+                                data.size.convert(),
 
-                                // input
-                                inputPinned
-                                    .addressOf(0)
-                                    .reinterpret<UByteVar>(),
+                                outputPinned.addressOf(0),
+                                output.size.convert(),
 
-                                data.size.toULong(),
-
-                                // output
-                                outputPinned
-                                    .addressOf(0)
-                                    .reinterpret<UByteVar>(),
-
-                                output.size.toULong(),
-
-                                // output length
-                                dataOutMoved
+                                dataOutMoved.ptr
                             )
                         }
                     }
