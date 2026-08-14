@@ -3,14 +3,23 @@ package com.app.orientalinsurance.data.cripto
 //import platform.CommonCrypto.*
 
 import io.ktor.util.encodeBase64
-import kotlinx.cinterop.*
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ULongVar
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.usePinned
+import kotlinx.cinterop.value
 import platform.CoreCrypto.CCCrypt
 import platform.CoreCrypto.CC_MD5
 import platform.CoreCrypto.CC_MD5_DIGEST_LENGTH
 import platform.CoreCrypto.kCCAlgorithmAES
 import platform.CoreCrypto.kCCEncrypt
+import platform.CoreCrypto.kCCOptionPKCS7Padding
 import platform.CoreCrypto.kCCSuccess
-import platform.Security.*
+import platform.Security.SecRandomCopyBytes
+import platform.Security.kSecRandomDefault
 
 actual object CryptoAES {
 
@@ -158,7 +167,7 @@ actual object CryptoAES {
             digest.usePinned { output ->
                 CC_MD5(
                     input.addressOf(0),
-                    data.size.toULong(),
+                    data.size.toUInt(),
                     output.addressOf(0)
                 )
             }
@@ -167,6 +176,9 @@ actual object CryptoAES {
         return digest
     }
 
+
+
+    @Suppress("DEPRECATION")
     @OptIn(ExperimentalForeignApi::class)
     private fun aesEncrypt(
         data: ByteArray,
@@ -174,58 +186,47 @@ actual object CryptoAES {
         iv: ByteArray
     ): ByteArray {
 
-        // PKCS7 padding
-        val paddingSize =
-            AES_BLOCK_SIZE - (data.size % AES_BLOCK_SIZE)
+        // AES block size = 16
+        // CommonCrypto will handle PKCS7 padding.
+        val output = ByteArray(data.size + 16)
 
-        val padded = ByteArray(
-            data.size + paddingSize
-        )
+        val encryptedLength = memScoped {
 
-        data.copyInto(padded)
+            val dataOutMoved = alloc<ULongVar>()
 
-        for (i in data.size until padded.size) {
-            padded[i] = paddingSize.toByte()
-        }
+            val status = data.usePinned { inputPinned ->
+                key.usePinned { keyPinned ->
+                    iv.usePinned { ivPinned ->
+                        output.usePinned { outputPinned ->
 
-        val output = ByteArray(
-            padded.size + AES_BLOCK_SIZE
-        )
-
-        var numBytesEncrypted = 0u
-
-        val status = padded.usePinned { inputPinned ->
-            key.usePinned { keyPinned ->
-                iv.usePinned { ivPinned ->
-                    output.usePinned { outputPinned ->
-
-                        CCCrypt(
-                            kCCEncrypt,
-                            kCCAlgorithmAES,
-                            0u, // CBC + PKCS7 handled manually
-                            keyPinned.addressOf(0),
-                            key.size.toULong(),
-                            ivPinned.addressOf(0),
-                            inputPinned.addressOf(0),
-                            padded.size.toULong(),
-                            outputPinned.addressOf(0),
-                            output.size.toULong(),
-                            cValues = null,
-                            dataOutMoved = TODO()
-                        )
+                            CCCrypt(
+                                kCCEncrypt,
+                                kCCAlgorithmAES,
+                                kCCOptionPKCS7Padding,
+                                keyPinned.addressOf(0),
+                                key.size.toULong(),
+                                ivPinned.addressOf(0),
+                                inputPinned.addressOf(0),
+                                data.size.toULong(),
+                                outputPinned.addressOf(0),
+                                output.size.toULong(),
+                                dataOutMoved.ptr
+                            )
+                        }
                     }
                 }
             }
+
+            check(status == kCCSuccess) {
+                "AES encryption failed. Status: $status"
+            }
+
+            dataOutMoved.value.toInt()
         }
 
-        check(status == kCCSuccess) {
-            "AES encryption failed. Status: $status"
-        }
-
-        // This approach needs correct output-length handling.
-        // Better implementation is below.
-        return output.copyOf(padded.size)
+        return output.copyOf(encryptedLength)
     }
+
 
     actual fun decrypt(password: String, cipherText: String): String {
         TODO("Not yet implemented")
