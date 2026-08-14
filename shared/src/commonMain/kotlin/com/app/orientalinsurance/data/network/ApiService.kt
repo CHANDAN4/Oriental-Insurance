@@ -54,7 +54,6 @@ class ApiService( private val client: HttpClient) {
 
 
     suspend fun toVerifyOtp(request: RequestLogin): ResponseVerifyOtp {
-
         return client.post(ApiRoute.VERIFY_OTP) {
             contentType(ContentType.Application.Json)
             setBody(request)

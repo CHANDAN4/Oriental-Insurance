@@ -25,6 +25,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -59,6 +62,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -84,13 +88,14 @@ import kotlinx.coroutines.delay
 fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController){
 
     val response by loginViewModel.responseForgotPassword.collectAsState()
-    val response by loginViewModel.responseForgotPassword.collectAsState()
+    val responseVerifyOtp by loginViewModel.responseVerifyOtp.collectAsState()
     var userName by remember { mutableStateOf("") }
     var mobileNo by remember { mutableStateOf("") }
     var isClick by remember { mutableStateOf(false) }
     var otp by remember { mutableStateOf("") }
     val sheetState = rememberModalBottomSheetState()
     val lifecycleOwner = LocalLifecycleOwner.current
+    var showPasswordDialog by remember { mutableStateOf(false) }
 
     SetStatusBarColor(
         color = Color(0xFF005BAC),
@@ -203,6 +208,39 @@ fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController)
         }
     }
 
+    when (val result = responseVerifyOtp) {
+
+        is ApiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is ApiState.Success -> {
+            showPasswordDialog=true
+        }
+
+        is ApiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = result.message,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        }
+
+        is ApiState.Empty -> {
+
+        }
+
+
+    }
 
     Column(modifier = Modifier.fillMaxSize().verticalScroll( rememberScrollState())) {
 
@@ -451,6 +489,23 @@ fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController)
 
     }
 
+
+    if(showPasswordDialog){
+        NewPasswordDialog(
+            onDismiss = {
+                showPasswordDialog = false
+            },
+            onUpdatePassword = { newPassword ->
+
+                // Call your API here
+
+                println("New password: $newPassword")
+
+                showPasswordDialog = false
+            }
+        )
+    }
+
 }
 
 
@@ -644,8 +699,7 @@ fun NewPasswordDialog(
     val isPasswordValid =
         newPassword.length >= 8
 
-    val isValid =
-        isPasswordValid && passwordsMatch
+    val isValid = isPasswordValid && passwordsMatch
 
     AlertDialog(
         onDismissRequest = onDismiss,
