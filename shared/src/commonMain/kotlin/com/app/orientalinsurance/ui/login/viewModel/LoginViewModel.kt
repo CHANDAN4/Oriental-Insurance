@@ -4,14 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.orientalinsurance.data.multiplateformData.SettingsManager
 import com.app.orientalinsurance.data.network.ApiState
+import com.app.orientalinsurance.ui.login.models.CustomerOtpRequest
+import com.app.orientalinsurance.ui.login.models.CustomerOtpResponse
 import com.app.orientalinsurance.ui.login.models.RequestCustomerCheckEmailMobile
 import com.app.orientalinsurance.ui.login.models.RequestForgetPassword
 import com.app.orientalinsurance.ui.login.models.RequestLoginWithUserIdRequestModel
 import com.app.orientalinsurance.ui.login.models.RequestLogin
 import com.app.orientalinsurance.ui.login.models.RequestPhoneNumberVerificationOtp
+import com.app.orientalinsurance.ui.login.models.RequestResetPassword
 import com.app.orientalinsurance.ui.login.models.RequestVerifyOTP
+import com.app.orientalinsurance.ui.login.models.RequestVerifySignupOtp
 import com.app.orientalinsurance.ui.login.models.ResponseForgotPassword
 import com.app.orientalinsurance.ui.login.models.ResponseLogin
+import com.app.orientalinsurance.ui.login.models.ResponseResetPassword
 import com.app.orientalinsurance.ui.login.models.ResponseSignUp
 import com.app.orientalinsurance.ui.login.models.ResponseVerifyOtp
 import com.app.orientalinsurance.ui.login.repository.LoginRepository
@@ -64,6 +69,47 @@ class LoginViewModel(val repository: LoginRepository,val settingsManager: Settin
     }
 
 
+    private val customerOtpResponse_ = MutableStateFlow<ApiState<CustomerOtpResponse>>(ApiState.Loading)
+
+    val customerOtpResponse : StateFlow<ApiState<CustomerOtpResponse>> = customerOtpResponse_
+
+
+    fun customerSignupOtp(requestLogin: CustomerOtpRequest) {
+
+        viewModelScope.launch {
+            repository?.customerSignupOtp(requestLogin)
+                ?.catch { e ->
+                    println("ERROR: ${e.message}")
+                }
+                ?.collect {
+                    customerOtpResponse_.value = it
+                }
+        }
+
+    }
+
+    private val customerOtpVerifySignupOtp_ = MutableStateFlow<ApiState<Unit>>(ApiState.Loading)
+
+    val customerOtpVerifySignupOtp : StateFlow<ApiState<Unit>> = customerOtpVerifySignupOtp_
+
+
+    fun customerSignupOtpVerify(requestLogin: RequestVerifySignupOtp) {
+
+        viewModelScope.launch {
+            repository?.customerSignupOtpVerify(requestLogin)
+                ?.catch { e ->
+                    println("ERROR: ${e.message}")
+                }
+                ?.collect {
+                    customerOtpVerifySignupOtp_.value = it
+                }
+        }
+
+    }
+
+
+
+
 
     private val responseForgotPassword_ = MutableStateFlow<ApiState<ResponseForgotPassword>>(ApiState.Loading)
 
@@ -100,6 +146,27 @@ class LoginViewModel(val repository: LoginRepository,val settingsManager: Settin
                 }
                 ?.collect {
                     responseVerifyOtp_.value = it
+                }
+
+        }
+
+    }
+
+
+    private val responseResetPassword_ = MutableStateFlow<ApiState<ResponseResetPassword>>(ApiState.Loading)
+
+    val responseResetPassword : StateFlow<ApiState<ResponseResetPassword>> = responseResetPassword_
+
+
+    fun resetPassword(resetPassword: RequestResetPassword) {
+
+        viewModelScope.launch {
+            repository?.resetPassword(resetPassword)
+                ?.catch { e ->
+                    println("ERROR: ${e.message}")
+                }
+                ?.collect {
+                    responseResetPassword_.value = it
                 }
 
         }

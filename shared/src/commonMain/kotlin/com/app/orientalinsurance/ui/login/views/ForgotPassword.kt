@@ -72,10 +72,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.app.orientalinsurance.data.network.ApiState
+import com.app.orientalinsurance.ui.dashboard.navigations.Dashboards
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.viewmodel.FlightViewModel
 import com.app.orientalinsurance.ui.font.mulishFontFamily
 import com.app.orientalinsurance.ui.login.models.RequestForgetPassword
 import com.app.orientalinsurance.ui.login.models.RequestLogin
+import com.app.orientalinsurance.ui.login.models.RequestResetPassword
 import com.app.orientalinsurance.ui.login.models.RequestVerifyOTP
 import com.app.orientalinsurance.ui.login.navigation.Login
 import com.app.orientalinsurance.ui.login.viewModel.LoginViewModel
@@ -89,8 +91,11 @@ fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController)
 
     val response by loginViewModel.responseForgotPassword.collectAsState()
     val responseVerifyOtp by loginViewModel.responseVerifyOtp.collectAsState()
+    val responseResetPassword by loginViewModel.responseResetPassword.collectAsState()
+
     var userName by remember { mutableStateOf("") }
     var mobileNo by remember { mutableStateOf("") }
+    var transactionId by remember { mutableStateOf("") }
     var isClick by remember { mutableStateOf(false) }
     var otp by remember { mutableStateOf("") }
     val sheetState = rememberModalBottomSheetState()
@@ -176,6 +181,7 @@ fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController)
                         onOtpChange = { otp = it },
                         onVerify = {
                             navController.navigateUp()
+                            transactionId=result.data.transactionId
                             val req= RequestVerifyOTP(otp,result.data.transactionId)
                             loginViewModel.toVerifyOtp(req)
                         },
@@ -221,6 +227,41 @@ fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController)
 
         is ApiState.Success -> {
             showPasswordDialog=true
+        }
+
+        is ApiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = result.message,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        }
+
+        is ApiState.Empty -> {
+
+        }
+
+
+    }
+
+    when (val result = responseResetPassword) {
+
+        is ApiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is ApiState.Success -> {
+            showPasswordDialog=false
+            navController.navigate(Login.LoginWithUID.route)
         }
 
         is ApiState.Error -> {
@@ -496,15 +537,17 @@ fun ForgotPassword(loginViewModel: LoginViewModel, navController: NavController)
                 showPasswordDialog = false
             },
             onUpdatePassword = { newPassword ->
-
                 // Call your API here
-
+                navController.navigate(Login.LoginWithUID.route)
+                val req= RequestResetPassword(newPassword = newPassword, confirmPassword = newPassword, transactionId = transactionId)
+                loginViewModel.resetPassword(req)
                 println("New password: $newPassword")
-
                 showPasswordDialog = false
             }
         )
     }
+
+
 
 }
 

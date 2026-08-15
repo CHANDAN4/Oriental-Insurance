@@ -72,8 +72,12 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.app.orientalinsurance.data.network.ApiState
 import com.app.orientalinsurance.ui.font.mulishFontFamily
+import com.app.orientalinsurance.ui.login.models.CustomerOtpRequest
 import com.app.orientalinsurance.ui.login.models.RequestCustomerCheckEmailMobile
+import com.app.orientalinsurance.ui.login.models.RequestForgetPassword
 import com.app.orientalinsurance.ui.login.models.RequestLogin
+import com.app.orientalinsurance.ui.login.models.RequestVerifyOTP
+import com.app.orientalinsurance.ui.login.models.RequestVerifySignupOtp
 import com.app.orientalinsurance.ui.login.navigation.Login
 import com.app.orientalinsurance.ui.login.viewModel.LoginViewModel
 import com.app.orientalinsurance.utils.SetStatusBarColor
@@ -85,6 +89,9 @@ import kotlinx.coroutines.delay
 fun SignupScreen(loginViewModel: LoginViewModel, navController: NavController){
 
     val response by loginViewModel.responseSignUp.collectAsState()
+    val customerOtpResponse by loginViewModel.customerOtpResponse.collectAsState()
+    val customerOtpVerifySignupOtp by loginViewModel.customerOtpVerifySignupOtp.collectAsState()
+
     var selectedGender by remember { mutableStateOf("Customer Account") }
     var email by remember { mutableStateOf("") }
     var mobileNo by remember { mutableStateOf("") }
@@ -162,26 +169,9 @@ fun SignupScreen(loginViewModel: LoginViewModel, navController: NavController){
 
             is ApiState.Success -> {
 
-                ModalBottomSheet(
-                    onDismissRequest = { },
-                    sheetState = sheetState,
-                    shape = RoundedCornerShape(
-                        topStart = 24.dp,
-                        topEnd = 24.dp
-                    )
-                ) {
-                    VerifyOtpBottomSheet(
-                        phoneNumber = "+91 98765 43210",
-                        otp = otp,
-                        onOtpChange = { otp = it },
-                        onVerify = {
-                            navController.navigateUp()
-                        },
-                        onResend = {
+                val req= CustomerOtpRequest(email,mobileNo)
+                loginViewModel.customerSignupOtp(req)
 
-                        }
-                    )
-                }
 
             }
 
@@ -204,6 +194,101 @@ fun SignupScreen(loginViewModel: LoginViewModel, navController: NavController){
 
         }
     }
+
+    when (val result = customerOtpResponse) {
+
+        is ApiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is ApiState.Success -> {
+
+
+            ModalBottomSheet(
+                onDismissRequest = { },
+                sheetState = sheetState,
+                shape = RoundedCornerShape(
+                    topStart = 24.dp,
+                    topEnd = 24.dp
+                )
+            ) {
+                VerifyOtpBottomSheet(
+                    userId,
+                    loginViewModel =loginViewModel ,
+                    phoneNumber = "",
+                    otp = otp,
+                    onOtpChange = { otp = it },
+                    onVerify = {
+                         navController.navigateUp()
+                         val req= RequestVerifySignupOtp(emailOtp =otp, mobileOtp = "", emailTransactionId = result.data.emailTransactionId, mobileTransactionId = result.data.mobileTransactionId)
+                         loginViewModel.customerSignupOtpVerify(req)
+                    },
+                    onResend = {
+
+                    }
+                )
+            }
+
+        }
+
+        is ApiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = result.message,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        }
+
+        is ApiState.Empty -> {
+
+        }
+
+
+    }
+
+    when (val result = customerOtpVerifySignupOtp) {
+
+        is ApiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is ApiState.Success -> {
+            navController.navigate(Login.LoginWithUID.route)
+        }
+
+        is ApiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = result.message,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        }
+
+        is ApiState.Empty -> {
+
+        }
+
+
+    }
+
 
     Column(modifier = Modifier.fillMaxWidth().verticalScroll( rememberScrollState())) {
 
@@ -1043,6 +1128,8 @@ fun GenderItem(
 
 @Composable
 fun VerifyOtpBottomSheet(
+    userName: String,
+    loginViewModel: LoginViewModel,
     phoneNumber: String,
     otp: String,
     onOtpChange: (String) -> Unit,
@@ -1051,7 +1138,7 @@ fun VerifyOtpBottomSheet(
     modifier: Modifier = Modifier
 ) {
 
-    var timeLeft by rememberSaveable { mutableIntStateOf(30) }
+    var timeLeft by rememberSaveable { mutableIntStateOf(120) }
     var isResendEnabled by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -1061,7 +1148,6 @@ fun VerifyOtpBottomSheet(
         }
         isResendEnabled = true
     }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -1083,45 +1169,59 @@ fun VerifyOtpBottomSheet(
         Text(
             text = "Verify OTP",
             style = MaterialTheme.typography.headlineSmall,
-            fontFamily = mulishFontFamily(),
             fontWeight = FontWeight.Bold,
-        )
+            fontFamily = mulishFontFamily(),
+
+            )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = "We've sent a 4-digit verification code to",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray,
             fontFamily = mulishFontFamily(),
-            fontWeight = FontWeight.SemiBold,
-            color = Color.Gray
+            fontWeight = FontWeight.Normal,
         )
 
         Text(
             text = phoneNumber,
             style = MaterialTheme.typography.titleMedium,
-            fontFamily = mulishFontFamily(),
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = FontWeight.SemiBold
         )
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        OTPTextField(
+        OTPTextFieldFP(
             otp = otp,
             onOtpChange = onOtpChange
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
-            text = if (isResendEnabled)
-                "You can resend OTP"
-            else
-                "Resend OTP in ${timeLeft}s",
-            color = Color(0xFFC85100),
-            fontFamily = mulishFontFamily(),
-            fontWeight = FontWeight.Normal,
-        )
-
+        if(isResendEnabled){
+            Text(
+                modifier= Modifier.fillMaxWidth().clickable{
+                    val req= RequestForgetPassword(userName = userName)
+                    loginViewModel.toForgotPassword(req)
+                },
+                text = "You can resend OTP",
+                color = Color(0xFFC85100),
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }else{
+            Text(
+                modifier= Modifier.fillMaxWidth().clickable{
+                    val req= RequestForgetPassword(userName = userName)
+                    loginViewModel.toForgotPassword(req)
+                },
+                text =  "Resend OTP in ${timeLeft}s",
+                color = Color(0xFFC85100),
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -1136,11 +1236,12 @@ fun VerifyOtpBottomSheet(
             Text("Verify",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
-                )
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
     }
+
 }
 
 

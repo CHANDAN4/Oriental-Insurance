@@ -6,9 +6,11 @@ import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_pol
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.ResponseCreateFlight
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.ResponseSaveData
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.ResponseTravelQuote
+import com.app.orientalinsurance.ui.login.models.CustomerOtpResponse
 import com.app.orientalinsurance.ui.login.models.RequestLogin
 import com.app.orientalinsurance.ui.login.models.ResponseForgotPassword
 import com.app.orientalinsurance.ui.login.models.ResponseLogin
+import com.app.orientalinsurance.ui.login.models.ResponseResetPassword
 import com.app.orientalinsurance.ui.login.models.ResponseSignUp
 import com.app.orientalinsurance.ui.login.models.ResponseVerifyOtp
 import io.ktor.client.HttpClient
@@ -42,6 +44,24 @@ class ApiService( private val client: HttpClient) {
 
     }
 
+    suspend fun customerSignupOtp(request: RequestLogin): CustomerOtpResponse {
+
+        return client.post(ApiRoute.CUSTOMER_SIGNUP_OTP) {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.body()
+
+    }
+
+    suspend fun customerSignupOtpVerify(request: RequestLogin): Unit {
+
+        return client.post(ApiRoute.CUSTOMER_SIGNUP_OTP_VERIFY) {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.body()
+
+    }
+
 
     suspend fun toForgotPassword(request: RequestLogin): ResponseForgotPassword {
 
@@ -58,6 +78,16 @@ class ApiService( private val client: HttpClient) {
             contentType(ContentType.Application.Json)
             setBody(request)
         }.body()
+
+    }
+
+    //auth/forgot/reset-password
+    suspend fun resetPassword(request: RequestLogin): ResponseResetPassword {
+
+        return client.put(ApiRoute.RESET_PASSWORD) {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.body<ResponseResetPassword>()
 
     }
 
