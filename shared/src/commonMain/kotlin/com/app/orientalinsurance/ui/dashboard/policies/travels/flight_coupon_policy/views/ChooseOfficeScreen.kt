@@ -100,12 +100,10 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
 
     LaunchedEffect(Unit) {
         val req = RequestProposalQuote(flightViewModel.coverAmt?.toInt() ?: 0)
-        //val req = RequestLogin("U2FsdGVkX1+LoHj+8DdtJax5Lrx5hoQHcwFjEedf6B7nUBlHBS1zAYDp+gWglPK3")
         flightViewModel.travelQuote(req, flightViewModel.id)
     }
 
     LaunchedEffect(chooseCity) {
-        //val req = RequestLogin("U2FsdGVkX19vne5gYYKPNwQ4FD1DC3UX0eI2AtY3j7dqDKwsXVFB24YNwqkzEeH4")
         val req = RequestBranchOffice(chooseCity)
         flightViewModel.chooseOffice(req)
     }
@@ -353,7 +351,7 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
                 is ApiState.Success -> {
 
 
-                    val content = (res as ApiState.Success).data.content
+                    val content = res.data.content
                     BranchSearchField(
                         content,
                         onBranchSelected = {
@@ -647,146 +645,126 @@ fun PolicySummaryChooseOffice(flightViewModel: FlightViewModel) {
             color = Color(0xFFE0E0E0)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        flightViewModel.flightFrom?.let {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
 
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "Flight From",
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-            Text(
-                text = ":",
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "${flightViewModel.flightFrom}",
-                color = Color.Gray,
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.SemiBold,
-            )
+                Text(
+                    modifier = Modifier.weight(.5f),
+                    text = "Flight From",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    text = ":",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = it,
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        flightViewModel.flightTo?.let {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Text(
+                    modifier = Modifier.weight(.5f),
+                    text = "Flight To",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    text = ":",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = it,
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        flightViewModel.coverAmt?.let {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
 
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "Flight To",
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-            Text(
-                text = ":",
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "${flightViewModel.flightFrom}",
-                color = Color.Gray,
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.SemiBold,
-            )
+                Text(
+                    modifier = Modifier.weight(.5f),
+                    text = "Cover Amount",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    text = ":",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = it,
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
         }
+
         Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        flightViewModel.branchOffice?.let {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
 
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "Cover Amount",
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-            Text(
-                text = ":",
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "${flightViewModel.coverAmt}",
-                color = Color.Gray,
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.SemiBold,
-            )
+                Text(
+                    modifier = Modifier.weight(.5f),
+                    text = "Branch Address",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    text = ":",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = it,
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
 
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "Branch Address",
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-            Text(
-                text = ":",
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "${flightViewModel.branchOffice}",
-                color = Color.Gray,
-                textAlign = TextAlign.Center,
-                fontSize = 14.sp,
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "Choose Office",
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-            Text(
-                text = ":",
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp
-            )
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "Noida,Sector 58 ,Block 20 F",
-                color = Color.Gray,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
         Spacer(modifier = Modifier.height(16.dp))
+
     }
 
 }
