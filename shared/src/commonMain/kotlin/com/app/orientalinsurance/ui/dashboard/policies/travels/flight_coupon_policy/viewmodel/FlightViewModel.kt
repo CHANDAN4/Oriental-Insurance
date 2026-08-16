@@ -30,7 +30,6 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     var flightTo: String?=null
     var coverAmt: String?=null
     var branchOffice: String?=null
-
     var branchOfficeId: String? = ""
     var officeCity: String? = ""
     var policyTermSelectedDate: String? = null
@@ -38,13 +37,8 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     var branchEmail: String? = ""
     var branchState: String? = null
     var branchAddress: String? = null
-
-
-    //  var saveProposalNumber: String? = ""
     var saveProposalFlag: Boolean? = null
     var branchName: String? = ""
-    var saveProposalNo: String? = ""
-    var panCardFlag: Boolean? = false
     var branchCode_: String? = ""
 
     var totalAmt: String?=null
@@ -54,6 +48,8 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     var flightNo: String?=null
     var airlineCom: String?=null
     var flightSelDate: String?=null
+    var disabilityStatus: String?=null
+    var whileChairStatus: String?=null
 
     private val responseBasicDetails_ = MutableStateFlow<ApiState<ResponseBasicDetails>>(ApiState.Loading)
 
@@ -76,12 +72,8 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
 
 
     var id: String?=null
-
     private val responseTravelQuote_ = MutableStateFlow<ApiState<ResponseTravelQuote>>(ApiState.Loading)
-
     val responseTravelQuote: StateFlow<ApiState<ResponseTravelQuote>> = responseTravelQuote_
-
-
     fun travelQuote(requestLogin: RequestProposalQuote, id: String?) {
 
         viewModelScope.launch {

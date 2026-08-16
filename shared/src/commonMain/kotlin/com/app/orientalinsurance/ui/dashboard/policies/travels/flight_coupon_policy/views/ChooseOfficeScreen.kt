@@ -120,6 +120,7 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
         }
 
         is ApiState.Success -> {
+            println("Quote Response :${result.data}")
             flightViewModel.totalAmt = "" + result.data.finalPremium
             flightViewModel.basicPreAmt = "" + result.data.basicPremium
             flightViewModel.minPreAmt = "" + result.data.minimumPremiumApportionment
@@ -349,7 +350,6 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
             when (val res = responseChooseOffice) {
 
                 is ApiState.Success -> {
-
 
                     val content = res.data.content
                     BranchSearchField(
