@@ -61,7 +61,7 @@ data class ResponseTravelQuote(
     @SerialName("direct")
     val direct: Boolean=false,
     @SerialName("disabled")
-    val disabled: Boolean=false,
+    val disabled: Boolean?=null,
     @SerialName("discount")
     val discount: String?=null,
     @SerialName("endDate")

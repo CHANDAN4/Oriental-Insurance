@@ -14,12 +14,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,6 +31,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -896,7 +900,7 @@ fun PremiumSummaryPersonalDetails(flightViewModel: FlightViewModel) {
             )
             Text(
                 modifier = Modifier.weight(1f),
-                text = "${flightViewModel.basicPreAmt}",
+                text = "₹${flightViewModel.basicPreAmt}",
                 color = Color.Gray,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
@@ -924,7 +928,7 @@ fun PremiumSummaryPersonalDetails(flightViewModel: FlightViewModel) {
             )
             Text(
                 modifier = Modifier.weight(1f),
-                text = "${flightViewModel.minPreAmt}",
+                text = "₹${flightViewModel.minPreAmt}",
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
                 fontSize = 14.sp,
@@ -952,7 +956,7 @@ fun PremiumSummaryPersonalDetails(flightViewModel: FlightViewModel) {
             )
             Text(
                 modifier = Modifier.weight(1f),
-                text = "${flightViewModel.gst}",
+                text = "₹${flightViewModel.gst}",
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
                 fontSize = 14.sp,
@@ -985,7 +989,7 @@ fun PremiumSummaryPersonalDetails(flightViewModel: FlightViewModel) {
             )
             Text(
                 modifier = Modifier.weight(1f),
-                text = "${flightViewModel.totalAmt}",
+                text = "₹${flightViewModel.totalAmt}",
                 color = Color.Gray,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
@@ -1001,8 +1005,60 @@ fun PremiumSummaryPersonalDetails(flightViewModel: FlightViewModel) {
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
+            OutlinedButton(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(end = 5.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    Color.White,
+                    contentColor = Color.Black
+                ),
+                onClick = {
+
+
+                }) {
+                Icon(
+                    imageVector = Icons.Filled.Download,
+                    tint = Color.Gray,
+                    contentDescription = "Download"
+                )
+                Text(
+                    textAlign = TextAlign.Left,
+                    text = " Download Quote",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Gray,
+                )
+            }
+
+            OutlinedButton(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(end = 5.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    Color.White,
+                    contentColor = Color.Black
+                ),
+                onClick = {
+
+                }) {
+                Icon(
+                    imageVector = Icons.Filled.Share,
+                    tint = Color.Gray,
+                    contentDescription = "  Share"
+                )
+                Text(
+                    textAlign = TextAlign.Left,
+                    text = "  Share Quote",
+                    fontFamily = mulishFontFamily(),
+                    fontSize = 14.sp,
+                    color = Color.Gray,
+                )
+            }
 
         }
         Spacer(modifier = Modifier.height(16.dp))
