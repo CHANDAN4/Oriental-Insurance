@@ -234,9 +234,10 @@ fun FlightDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
 
                     Button(
                         onClick = {
-                            navController.navigate(Dashboards.ProposerDetailsScreen.route)
+                            flightViewModel.flightNo=flightNo
+                            flightViewModel.airlineCom=airLineComp
+                            flightViewModel.flightSelDate=selectedDateOfTravel
                             val req=RequestSaveDate(selectedDateOfTravel)
-                            //val req= RequestLogin("U2FsdGVkX1/UkwQ87EWihuPCvvLthWyMsW7cu0L9ug5mGdm2fhHoMFAU+h4NdNdqFLR0C/Ht4giuV2oqFgQ5gstyVC/+RxErrjTKykWvZlw=")
                             flightViewModel.saveData(req,flightViewModel.id)
                         },
                         modifier = Modifier
@@ -752,7 +753,6 @@ fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
         modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = "Policy Summary",
@@ -1056,7 +1056,6 @@ fun PolicySummaryFlightDetails(flightViewModel: FlightViewModel) {
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-
     }
 
 

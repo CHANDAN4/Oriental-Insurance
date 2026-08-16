@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -57,7 +59,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.app.orientalinsurance.data.network.ApiState
 import com.app.orientalinsurance.ui.dashboard.navigations.Dashboards
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.models.RequestProposalQuote
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.viewmodel.FlightViewModel
 import com.app.orientalinsurance.ui.font.mulishFontFamily
 import com.app.orientalinsurance.ui.login.views.OTPTextFieldFP
@@ -68,6 +72,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CoverAmountScreen(flightViewModel: FlightViewModel, navController: NavHostController) {
 
+    val response by flightViewModel.responseTravelQuote.collectAsState()
     var coverAmt by remember { mutableStateOf(flightViewModel.coverAmt?:"") }
     var isClick by remember { mutableStateOf(false) }
     val isEnable by remember(coverAmt) {
@@ -79,7 +84,54 @@ fun CoverAmountScreen(flightViewModel: FlightViewModel, navController: NavHostCo
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
 
+    when (val result = response) {
 
+        is ApiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is ApiState.Success -> {
+            println("Quote Response :${result.data}")
+            flightViewModel.totalAmt = "" + result.data.finalPremium
+            flightViewModel.basicPreAmt = "" + result.data.basicPremium
+            flightViewModel.minPreAmt = "" + result.data.minimumPremiumApportionment
+            flightViewModel.gst = "" + result.data.gst
+            navController.navigate(Dashboards.ChooseOfficeScreen.route)
+        }
+
+        is ApiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = result.message,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        }
+
+        is ApiState.Empty -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Data Not Found",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+        }
+
+
+    }
 
     Scaffold(
 
@@ -272,7 +324,8 @@ fun CoverAmountScreen(flightViewModel: FlightViewModel, navController: NavHostCo
                 onClick = {
                     isClick = true
                     flightViewModel.coverAmt=coverAmt
-                    navController.navigate(Dashboards.ChooseOfficeScreen.route)
+                    val req = RequestProposalQuote(coverAmt.toInt())
+                    flightViewModel.travelQuote(req, flightViewModel.id)
 
                 },
                 shape = RoundedCornerShape(15)

@@ -227,8 +227,7 @@ fun ProposerDetailsScreen(flightViewModel: FlightViewModel, navController: NavHo
                         onClick = {
                             flightViewModel.disabilityStatus=selectedDisabilityStatus
                             flightViewModel.whileChairStatus=selectedConfinedWheelChair
-                            //val req= RequestLogin("U2FsdGVkX1+Fo60FiLpjiQpRVk+gSfrxHSvYJkAgdDU9MjCQ3PsBx1yn3v2+M7qItK5Q3xaX69/dhorZi+YJqRMH/CoUYvzuyz6pDMseG+ANr4egyAGiIB4j0UnfNQpgOPZubQ4WXOPCVDdYVJfiCeyvIxjh5IiYTd2eptqMtsf5gMFDEuwvcO7+itm5qgPsHn0gc+vVE9cScjY1IWldNB3GyK90L8XEWGhf4IoeQnj5pTV5iNfhsUvO4l21caFS1SDth3meCXVZ5OlDN3ZfeGQaMdiibR8oXv3uAIpnqD+CbC+Jsc7QpCYOEnusLeeXNsQKTpzclXRuZEZn6zT7y57L7+j9ZSd6p4Xh8JNEhaZk/vlw1upsAMRr8IHbskpkuK8XUtLsTkOCMWqOf3pD7CzPuYDrw2dmlRZFXlUVcQWitAZUj3OY9wFySJlJE7UlzOUFuwj0I138MbipUIqFwYrYla3S2DJGEBZuOA54kUrTnZ7woJqjKMYBVN76ujAJxGOqTq4MEGHfwv6wtBFu2T3WAxfrXDszUiXCUvPegxrO7l/VCpawjtOrtH/YP77utXW2rgjNg97kK7AXlCv+IDqlCiD2w9LJsdY8+1+ilLgLCD52MLktXCCIr2hkod4C3ys8KGjm4YYyrUChj0YMGono2onRnldFPPmQz+qB81ZJMrGg5jrC3j/2TQI9iZgsoC/SGDS5RWEVFk71qPJ037/K6JdzAPqfWeY+ZmXzhHlzKkhH4ZdXZpnQeLgEp3k5SMlL6aeGGjB5s9GOWToXuJwvuSF6aoRSWIDQYRmF1mG+OKmbU0GG4/btNqHjk0y20lMCmWgq60s86kRsjYDGnSMfDcMilUMpWdkff0B3DwGvR5cRCCDzUvDUUn4d5hL0FTCWLt9lDQeo4B9b6Tnk+cjXwa8s3OzxuD+BeTMKd21J40Iog4cr7RRiA3V1kAEOYVGq066aFz0yNSMeFomNlep1x1lth4gP2JqIPUA/LHvMJ/JfewrMv5B13izeaX2R")
-                            var req=RequestProposalAdditionalDetails(
+                            val req=RequestProposalAdditionalDetails(
                                 age = null,
                                 agentBrokerType = null,
                                 airlinesCompany = flightViewModel?.airlineCom!!,
@@ -741,7 +740,6 @@ fun PolicySummaryProposerDetails(flightViewModel: FlightViewModel) {
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-
     }
 
 }

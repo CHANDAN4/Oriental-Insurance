@@ -78,7 +78,7 @@ import kotlin.text.get
 @Composable
 fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostController) {
 
-    val response by flightViewModel.responseTravelQuote.collectAsState()
+
     val responseChooseOffice by flightViewModel.responseChooseOffice.collectAsState()
     val responseCreate by flightViewModel.responseCreateFlight.collectAsState()
 
@@ -98,63 +98,12 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
     val sheetStatePA = rememberModalBottomSheetState()
     val scopePA = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        val req = RequestProposalQuote(flightViewModel.coverAmt?.toInt() ?: 0)
-        flightViewModel.travelQuote(req, flightViewModel.id)
-    }
-
     LaunchedEffect(chooseCity) {
         val req = RequestBranchOffice(chooseCity)
         flightViewModel.chooseOffice(req)
     }
 
-    when (val result = response) {
 
-        is ApiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-
-        is ApiState.Success -> {
-            println("Quote Response :${result.data}")
-            flightViewModel.totalAmt = "" + result.data.finalPremium
-            flightViewModel.basicPreAmt = "" + result.data.basicPremium
-            flightViewModel.minPreAmt = "" + result.data.minimumPremiumApportionment
-            flightViewModel.gst = "" + result.data.gst
-        }
-
-        is ApiState.Error -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = result.message,
-                    fontFamily = mulishFontFamily(),
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-        }
-
-        is ApiState.Empty -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Data Not Found",
-                    fontFamily = mulishFontFamily(),
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-        }
-
-
-    }
 
     when (val result = responseCreate) {
 
