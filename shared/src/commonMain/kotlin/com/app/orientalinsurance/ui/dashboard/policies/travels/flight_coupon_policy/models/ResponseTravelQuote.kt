@@ -59,9 +59,9 @@ data class ResponseTravelQuote(
     @SerialName("digitalDiscount")
     val digitalDiscount: String?=null,
     @SerialName("direct")
-    val direct: Boolean,
+    val direct: Boolean=false,
     @SerialName("disabled")
-    val disabled: Boolean,
+    val disabled: Boolean=false,
     @SerialName("discount")
     val discount: String?=null,
     @SerialName("endDate")
@@ -89,19 +89,19 @@ data class ResponseTravelQuote(
     @SerialName("identityProof")
     val identityProof: String?=null,
     @SerialName("intermediary")
-    val intermediary: Boolean,
+    val intermediary: Boolean=false,
     @SerialName("intermediaryId")
     val intermediaryId: String?=null,
     @SerialName("intermediaryName")
     val intermediaryName: String?=null,
     @SerialName("kycFlag")
-    val kycFlag: Boolean,
+    val kycFlag: Boolean=false,
     @SerialName("lastUpdatedBy")
     val lastUpdatedBy: String?=null,
     @SerialName("lastUpdatedDate")
     val lastUpdatedDate: String?=null,
     @SerialName("memberFlag")
-    val memberFlag: Boolean,
+    val memberFlag: Boolean=false,
     @SerialName("members")
     val members: String?=null,
     @SerialName("minimumPremiumApportionment")

@@ -88,7 +88,7 @@ fun CoverAmountScreen(flightViewModel: FlightViewModel, navController: NavHostCo
 
         is ApiState.Loading -> {
             Box(
-                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
+                modifier = Modifier.fillMaxSize().padding(top = 230.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
                 CircularProgressIndicator()

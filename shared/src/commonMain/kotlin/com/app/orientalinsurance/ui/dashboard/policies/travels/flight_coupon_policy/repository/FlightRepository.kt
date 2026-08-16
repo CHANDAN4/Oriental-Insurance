@@ -63,6 +63,7 @@ class FlightRepository(private val apiService: ApiService) {
                 }
 
             } catch (e: Exception) {
+                print("Error : "+e.message)
                 emit(ApiState.Error(e.message ?: "Unknown Error"))
             }
 
