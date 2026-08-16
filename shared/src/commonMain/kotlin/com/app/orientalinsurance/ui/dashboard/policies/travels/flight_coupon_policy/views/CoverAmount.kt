@@ -326,8 +326,7 @@ fun PolicySummaryCover(flightViewModel: FlightViewModel) {
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
             textAlign = TextAlign.Left
-            )
-
+        )
         Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider(
             thickness = 1.dp,
@@ -362,7 +361,6 @@ fun PolicySummaryCover(flightViewModel: FlightViewModel) {
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(8.dp))
         flightViewModel.flightTo?.let {
             Row(
@@ -393,6 +391,20 @@ fun PolicySummaryCover(flightViewModel: FlightViewModel) {
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Plan Summary",
+            fontFamily = mulishFontFamily(),
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Left
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = Color(0xFFE0E0E0)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
         flightViewModel.coverAmt?.let {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -421,7 +433,20 @@ fun PolicySummaryCover(flightViewModel: FlightViewModel) {
                 )
             }
         }
-
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Additional Details",
+            fontFamily = mulishFontFamily(),
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Left
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = Color(0xFFE0E0E0)
+        )
         Spacer(modifier = Modifier.height(8.dp))
         flightViewModel.branchOffice?.let {
             Row(
@@ -451,7 +476,151 @@ fun PolicySummaryCover(flightViewModel: FlightViewModel) {
                 )
             }
         }
+        Spacer(modifier = Modifier.height(8.dp))
+        flightViewModel.flightNo?.let {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
 
+                Text(
+                    modifier = Modifier.weight(.5f),
+                    text = "Flight No",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    text = ":",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = it,
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        flightViewModel.airlineCom?.let {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Text(
+                    modifier = Modifier.weight(.5f),
+                    text = "Airline",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    text = ":",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = it,
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        flightViewModel.policyTermSelectedDate?.let {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Text(
+                    modifier = Modifier.weight(.5f),
+                    text = "Date Of Travel",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    text = ":",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = it,
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        flightViewModel.disabilityStatus?.let {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Text(
+                    modifier = Modifier.weight(.5f),
+                    text = "Disability Status",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    text = ":",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = it,
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        flightViewModel.whileChairStatus?.let {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Text(
+                    modifier = Modifier.weight(.5f),
+                    text = "Confined to Wheelchair",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    text = ":",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = it,
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
     }
