@@ -218,7 +218,6 @@ fun FlightDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
                             primumBreakup=true
                         }
                     ) {
-                        
 
                         Text(
                             text = "₹ ${flightViewModel.totalAmt}",
@@ -241,7 +240,9 @@ fun FlightDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
                             flightViewModel.flightNo=flightNo
                             flightViewModel.airlineCom=airLineComp
                             flightViewModel.flightSelDate=selectedDateOfTravel
-                            val req=RequestSaveDate(selectedDateOfTravel)
+                            var s=selectedDateOfTravel.split("/")
+                            var rDate=""+s[2]+"-"+s[1]+"-"+s[0]+"T00:00:00Z"
+                            val req=RequestSaveDate(rDate)
                             flightViewModel.saveData(req,flightViewModel.id)
                         },
                         modifier = Modifier

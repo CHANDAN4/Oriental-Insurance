@@ -30,8 +30,7 @@ actual fun ShowDatePicker(
 
                     state.selectedDateMillis?.let {
 
-                        val formatter =
-                            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
                         onDateSelected(formatter.format(Date(it)))
                     }
