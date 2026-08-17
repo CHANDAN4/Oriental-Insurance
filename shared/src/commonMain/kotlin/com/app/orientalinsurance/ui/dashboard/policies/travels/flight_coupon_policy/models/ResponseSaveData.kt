@@ -17,29 +17,31 @@ data class ResponseSaveData(
     @SerialName("airlinesCompany")
     val airlinesCompany: String?=null,
     @SerialName("basicPremium")
-    val basicPremium: Double,
+    val basicPremium: Double? = null,
     @SerialName("branchAddress")
-    val branchAddress: String,
+    val branchAddress: String? = null,
+    @SerialName("branchEmail")
+    val branchEmail: String? = null,
+    @SerialName("branchOffice")
+    val branchOffice: String? = null,
+    @SerialName("direct")
+    val direct: Boolean? = null,
     @SerialName("branchCode")
     val branchCode: String?=null,
-    @SerialName("branchEmail")
-    val branchEmail: String,
-    @SerialName("branchOffice")
-    val branchOffice: String,
     @SerialName("branchOfficeId")
-    val branchOfficeId: String,
+    val branchOfficeId: String?=null,
     @SerialName("branchState")
-    val branchState: String,
+    val branchState: String?=null,
     @SerialName("category")
-    val category: String,
+    val category: String?=null,
     @SerialName("city")
     val city: String?=null,
     @SerialName("countryOfVisit")
     val countryOfVisit: String?=null,
     @SerialName("createdBy")
-    val createdBy: String,
+    val createdBy: String?=null,
     @SerialName("createdDate")
-    val createdDate: String,
+    val createdDate: String?=null,
     @SerialName("createdFor")
     val createdFor: String?=null,
     @SerialName("dateOfBirth")
@@ -58,8 +60,6 @@ data class ResponseSaveData(
     val destinationState: String?=null,
     @SerialName("digitalDiscount")
     val digitalDiscount: String?=null,
-    @SerialName("direct")
-    val direct: Boolean,
     @SerialName("disabled")
     val disabled: String?=null,
     @SerialName("discount")
@@ -69,9 +69,9 @@ data class ResponseSaveData(
     @SerialName("familyDetails")
     val familyDetails: String?=null,
     @SerialName("finalPremium")
-    val finalPremium: Double,
+    val finalPremium: Double?=null,
     @SerialName("flightFrom")
-    val flightFrom: String,
+    val flightFrom: String?=null,
     @SerialName("flightNo")
     val flightNo: String?=null,
     @SerialName("flightTo")
@@ -79,7 +79,7 @@ data class ResponseSaveData(
     @SerialName("gender")
     val gender: String?=null,
     @SerialName("gst")
-    val gst: Double,
+    val gst: Double?=null,
     @SerialName("handicappedStatus")
     val handicappedStatus: String?=null,
     @SerialName("id")
