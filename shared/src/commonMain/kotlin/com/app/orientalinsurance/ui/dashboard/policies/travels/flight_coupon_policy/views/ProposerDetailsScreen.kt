@@ -229,14 +229,14 @@ fun ProposerDetailsScreen(flightViewModel: FlightViewModel, navController: NavHo
                     Button(
                         onClick = {
                             flightViewModel.disabilityStatus=selectedDisabilityStatus
-                            flightViewModel.whileChairStatus=selectedConfinedWheelChair
+                            flightViewModel.whileChairStatus=selectedConfinedStatus
                             val req=RequestProposalAdditionalDetails(
                                 age = null,
                                 agentBrokerType = null,
                                 airlinesCompany = flightViewModel?.airlineCom!!,
                                 countryOfVisit = "",
                                 dateOfBirth = "",
-                                dateOfTravel = flightViewModel.flightSelDate,
+                                dateOfTravel = flightViewModel.dateOfTravel,
                                 desCityCode = "",
                                 desStateCode = "",
                                 destinationCity = "",
@@ -265,7 +265,7 @@ fun ProposerDetailsScreen(flightViewModel: FlightViewModel, navController: NavHo
                                 sourceType = null,
                                 startDate = "",
                                 visitingSchengenCountries = null,
-                                wheelChair = confinedWheelChair
+                                wheelChair = selectedConfinedStatus
                             )
                             flightViewModel.additionalDetails(req,flightViewModel.id)
                         },

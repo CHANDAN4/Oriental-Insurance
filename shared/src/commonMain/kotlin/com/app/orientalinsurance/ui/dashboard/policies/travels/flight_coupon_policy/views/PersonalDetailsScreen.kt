@@ -1,6 +1,7 @@
 package com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views
 
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Share
@@ -49,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -65,7 +69,12 @@ import com.app.orientalinsurance.ui.dashboard.navigations.Dashboards
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.viewmodel.FlightViewModel
 import com.app.orientalinsurance.ui.font.mulishFontFamily
 import com.app.orientalinsurance.utils.ShowDatePicker
+import io.ktor.websocket.Frame
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
+import orientalinsurance.shared.generated.resources.Res
+import orientalinsurance.shared.generated.resources.shield
+import kotlin.js.JsExport
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,6 +100,10 @@ fun FlightPersonalDetailsScreen(flightViewModel: FlightViewModel, navController:
     var primumBreakup by remember { mutableStateOf(false) }
     val sheetStatePA = rememberModalBottomSheetState()
     val scopePA = rememberCoroutineScope()
+
+    //Kyc
+    var isSheetOpen by remember { mutableStateOf(true) }
+
 
     Scaffold(
 
@@ -216,59 +229,45 @@ fun FlightPersonalDetailsScreen(flightViewModel: FlightViewModel, navController:
             Spacer(modifier = Modifier.height(30.dp))
             Text(
                 modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
-                text = "Flight Details",
+                text = "KYC Details(Proof of Identity & Address)",
                 fontFamily = mulishFontFamily(),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Left,
                 color = Color.Black,
                 fontSize = 18.sp
             )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
+                text = "Upload Document User Manual",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Left,
+                color = Color(0xFFC85100),
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
+                text = "User Type*",
+                fontFamily = mulishFontFamily(),
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Left,
+                color = Color.Black,
+                fontSize = 14.sp
+            )
+
             Spacer(modifier = Modifier.height(50.dp))
 
             OutlinedTextField(
-                value = flightNo,
-                onValueChange = { flightNo = it },
-
+                value = "Individual/HUF",
+                onValueChange = {  },
+                readOnly = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 20.dp, end = 20.dp),
-
-                // Hint
-                placeholder = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Flight No ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                // Floating label
-                label = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Flight No ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
                 singleLine = true,
-
                 shape = RoundedCornerShape(12.dp),
-
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Done
@@ -308,49 +307,16 @@ fun FlightPersonalDetailsScreen(flightViewModel: FlightViewModel, navController:
             )
             Spacer(modifier = Modifier.height(15.dp))
             OutlinedTextField(
-                value = airLineComp,
-                onValueChange = { airLineComp = it },
+                value = "Corporate/Trust,NGO,Societies Government,Educational Institute,Association",
+                onValueChange = {  },
+                readOnly = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 20.dp, end = 20.dp),
-                // Hint
-                placeholder = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Airlines Company ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                // Floating label
-                label = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Airlines Company  ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
                 singleLine = true,
-
                 shape = RoundedCornerShape(12.dp),
-
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
+                    keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Done
                 ),
 
@@ -388,7 +354,7 @@ fun FlightPersonalDetailsScreen(flightViewModel: FlightViewModel, navController:
             )
             Spacer(modifier = Modifier.height(15.dp))
             OutlinedTextField(
-                value = selectedDateOfTravel,
+                value = "",
                 readOnly = true,
                 onValueChange = {
                     //selectedDateOfTravel = it
@@ -400,11 +366,11 @@ fun FlightPersonalDetailsScreen(flightViewModel: FlightViewModel, navController:
                 placeholder = {
                     Text(
                         buildAnnotatedString {
-                            append("Date Of Travel ")
+                            append("GST Number ")
                             withStyle(
                                 style = SpanStyle(color = Color.Red)
                             ) {
-                                append("*")
+                                append("")
                             }
                         },
                         fontFamily = mulishFontFamily(),
@@ -416,30 +382,16 @@ fun FlightPersonalDetailsScreen(flightViewModel: FlightViewModel, navController:
                 label = {
                     Text(
                         buildAnnotatedString {
-                            append("Select Date Of Travel  ")
+                            append("GST Number")
                             withStyle(
                                 style = SpanStyle(color = Color.Red)
                             ) {
-                                append("*")
+                                append("")
                             }
                         },
                         fontFamily = mulishFontFamily(),
                         fontWeight = FontWeight.Normal
                     )
-                },
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            showPicker = true
-                            // Open DatePicker here
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Calendar",
-                            tint = Color.Gray
-                        )
-                    }
                 },
 
                 singleLine = true,
@@ -496,6 +448,120 @@ fun FlightPersonalDetailsScreen(flightViewModel: FlightViewModel, navController:
 
         }
 
+    }
+
+    val scope1 = rememberCoroutineScope()
+    val bottomSheetState = rememberModalBottomSheetState()
+
+    if (isSheetOpen) {
+
+        ModalBottomSheet(
+            sheetState = bottomSheetState,
+            onDismissRequest = {
+                scope.launch {
+                    if (!bottomSheetState.isVisible) {
+                        bottomSheetState.show()
+                    }
+                }
+
+            }) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(600.dp)
+                    .background(Color.Blue)
+                    .padding(16.dp)
+            ) {
+                Row(
+                    modifier= Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Text(
+                        text = "Complete KYC",
+                        fontSize = 24.sp,
+                        lineHeight = 27.sp,
+                        fontFamily = mulishFontFamily(),
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    IconButton(onClick = {
+                        isSheetOpen = false
+                        navController.navigateUp()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Exit Button",
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "Aadhaar-based KYC authentication has become mandatory for issuing life certificates",
+                    fontSize = 18.sp,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                )
+                {
+                    Image(
+                        painter = painterResource(Res.drawable.shield),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .padding(end = 5.dp),
+//
+                    )
+                    Text(
+                        text = "Your details are safe with us. We encrypt all personal information to keep it private secure.",
+                        fontSize =18.sp,
+                        fontFamily = mulishFontFamily(),
+                        fontWeight = FontWeight.Bold
+                    )
+
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    onClick = {
+                       // Log.e("proposalNumber : ", "" + responseProposalCreate?.proposalNumber)
+
+
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        Color.Blue,
+                        contentColor = Color.White
+                    ),
+                ) {
+
+                    Text(
+                        text = "Complete KYC",
+                        fontSize = 18.sp,
+                        fontFamily = mulishFontFamily(),
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(50.dp))
+
+
+            }
+
+        }
     }
 
 

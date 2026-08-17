@@ -48,6 +48,8 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     var flightNo: String?=null
     var airlineCom: String?=null
     var flightSelDate: String?=null
+    var dateOfTravel: String?=null
+
     var disabilityStatus: String?=null
     var whileChairStatus: String?=null
 

@@ -240,8 +240,9 @@ fun FlightDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
                             flightViewModel.flightNo=flightNo
                             flightViewModel.airlineCom=airLineComp
                             flightViewModel.flightSelDate=selectedDateOfTravel
-                            var s=selectedDateOfTravel.split("/")
-                            var rDate=""+s[2]+"-"+s[1]+"-"+s[0]+"T00:00:00Z"
+                            val s= selectedDateOfTravel.split("/")
+                            val rDate=""+s[2]+"-"+s[1]+"-"+s[0]+"T00:00:00.000+00:00"
+                            flightViewModel.dateOfTravel=rDate
                             val req=RequestSaveDate(rDate)
                             flightViewModel.saveData(req,flightViewModel.id)
                         },
