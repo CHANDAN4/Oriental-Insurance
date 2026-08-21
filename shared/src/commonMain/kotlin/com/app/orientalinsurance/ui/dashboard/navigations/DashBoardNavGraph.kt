@@ -9,12 +9,16 @@ import com.app.orientalinsurance.ui.dashboard.home.viewmodel.HomeViewModel
 import com.app.orientalinsurance.ui.dashboard.home.views.AboutPage
 import com.app.orientalinsurance.ui.dashboard.home.views.HomePage
 import com.app.orientalinsurance.ui.dashboard.home.views.ProfilePage
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.navigation.Form60Screen
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.viewmodel.FlightViewModel
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views.ChooseOfficeScreen
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views.CoverAmountScreen
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views.DeclarationScreen
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views.FlightDetailsScreen
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views.FlightPersonalDetailsScreen
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views.NomineeScreen
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views.PolicyDetailsScreen
+import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views.PreviewScreen
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views.ProposerDetailsScreen
 import com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views.RightWayScreen
 
@@ -70,6 +74,27 @@ fun DashBoardNavGraph(homeViewModel: HomeViewModel,flightViewModel: FlightViewMo
             FlightPersonalDetailsScreen(flightViewModel, navController)
         }
 
+        composable(route=Dashboards.Form60.route) {
+            Form60Screen(
+                flightViewModel,
+                onComplete = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(route= Dashboards.NomineeDetails.route){
+            NomineeScreen(flightViewModel, navController)
+        }
+
+        composable(route= Dashboards.PreviewDetails.route){
+            PreviewScreen(flightViewModel, navController)
+        }
+
+        composable(route= Dashboards.DeclarationScreen.route){
+            DeclarationScreen(flightViewModel, navController)
+        }
+
 
     }
 
@@ -103,7 +128,17 @@ sealed class Dashboards(val route: String){
     object FlightDetailsScreen : Dashboards("FlightDetailsScreen")
 
     object ProposerDetailsScreen : Dashboards("ProposerDetailsScreen")
+
+    object Form60 : Dashboards("Form60")
+
+
     object PersonalDetails : Dashboards("PersonalDetails")
+
+    object NomineeDetails : Dashboards("NomineeDetails")
+
+    object PreviewDetails : Dashboards("PreviewDetails")
+    object DeclarationScreen : Dashboards("DeclarationScreen")
+
 
 
 

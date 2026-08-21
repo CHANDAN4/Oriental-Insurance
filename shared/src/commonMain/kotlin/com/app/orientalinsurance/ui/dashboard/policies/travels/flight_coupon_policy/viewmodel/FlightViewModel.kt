@@ -1,5 +1,10 @@
 package com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.viewmodel
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.orientalinsurance.data.multiplateformData.SettingsManager
@@ -53,7 +58,44 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     var disabilityStatus: String?=null
     var whileChairStatus: String?=null
 
-    private val responseBasicDetails_ = MutableStateFlow<ApiState<ResponseBasicDetails>>(ApiState.Loading)
+    //Form60PersonalDetails
+    var firstName: String?=null
+    var middleNmae :String?=null
+    var surName :String?=null
+    var email60 :String?=null
+    var selectedDOB :String?=null
+
+    //Form60FatherDetails
+    var firstNameF: String?=null
+    var middleNmaeF :String?=null
+    var surNameF :String?=null
+
+    //Form60LocationDetails
+    var roomNo : String?=null
+    var floorNo : String?=null
+    var nameOfPremises : String?=null
+    var blockName : String?=null
+    var streetNo : String?=null
+    var state : String?=null
+    var city : String?=null
+    var pincode : String?=null
+    var telephonNo : String?=null
+    var mobileNo : String?=null
+
+
+    //Form60TransactionDetails
+    var traAmt : String?=null
+    var selectedTraDate : String?=null
+    var noOfPerson : String?=null
+    var modeOfTran : String?=null
+    var panCardAppNo : String?=null
+    var agricultureIncome : String?=null
+    var otherIncome : String?=null
+    var aadharNo : String?=null
+
+
+
+    private val responseBasicDetails_ = MutableStateFlow<ApiState<ResponseBasicDetails>>(ApiState.Empty)
 
     val responseBasicDetails: StateFlow<ApiState<ResponseBasicDetails>> = responseBasicDetails_
 

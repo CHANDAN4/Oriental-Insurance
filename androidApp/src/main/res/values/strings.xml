@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Oriental Insurance</string>
+    <string name="we_have_sent_an_otp_to_your_email_id_and_phone_number"> We have sent an otp to your email id and phone number</string>
+
 </resources>

@@ -58,9 +58,9 @@ import kotlin.collections.emptyList
 fun PolicyDetailsScreen(flightViewModel: FlightViewModel, navController: NavHostController) {
 
     val response by flightViewModel.responseBasicDetails.collectAsState()
-    var flightFrom by remember { mutableStateOf(flightViewModel.flightFrom?:"")}
-    var flightTo by remember { mutableStateOf(flightViewModel.flightTo?:"")}
-    var isClick by remember { mutableStateOf(false)}
+    var flightFrom by remember { mutableStateOf(flightViewModel.flightFrom ?: "") }
+    var flightTo by remember { mutableStateOf(flightViewModel.flightTo ?: "") }
+    var isClick by remember { mutableStateOf(false) }
     val isEnable by remember(flightFrom, flightTo) {
         derivedStateOf {
             flightFrom.isNotBlank() && flightTo.isNotBlank()
@@ -68,52 +68,45 @@ fun PolicyDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
     }
 
 
-    if(flightFrom.isNotEmpty()&& isClick || flightTo.isNotEmpty() &&isClick){
-        when (val result = response) {
 
-            is ApiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(top = 250.dp),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    CircularProgressIndicator()
-                }
+    when (val result = response) {
+
+        is ApiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                CircularProgressIndicator()
             }
+        }
 
-            is ApiState.Success -> {
-                flightViewModel.id=result.data.id
-                flightViewModel.flightFrom=flightFrom
-                flightViewModel.flightTo=flightTo
-                navController.navigate(Dashboards.CoverAmount.route)
+        is ApiState.Success -> {
+            flightViewModel.id = result.data.id
+            flightViewModel.flightFrom = flightFrom
+            flightViewModel.flightTo = flightTo
+            navController.navigate(Dashboards.CoverAmount.route)
+        }
+
+        is ApiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = result.message,
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Normal,
+                )
             }
+        }
 
-            is ApiState.Error -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = result.message,
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal,
-                    )
-                }
-            }
-
-            is ApiState.Empty -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = "Data Not Found",
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal,
-                    )
-                }
-            }
-
+        is ApiState.Empty -> {
 
         }
+
+
     }
+
 
     Scaffold(
 
@@ -294,8 +287,7 @@ fun PolicyDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
                 shape = RoundedCornerShape(12.dp),
 
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text
-                    ,
+                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
                 ),
 
@@ -336,14 +328,15 @@ fun PolicyDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
 
             Button(
                 enabled = isEnable,
-                modifier = Modifier.fillMaxWidth().height(50.dp).padding(start = 20.dp, end = 20.dp),
+                modifier = Modifier.fillMaxWidth().height(50.dp)
+                    .padding(start = 20.dp, end = 20.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFC85100), // Background color
                     contentColor = Color.White          // Text color
                 ),
                 onClick = {
-                    isClick=true
-                    var requestBasicDetails= RequestBasicDetails(
+                    isClick = true
+                    var requestBasicDetails = RequestBasicDetails(
                         "",
                         "",
                         "",
@@ -377,7 +370,8 @@ fun PolicyDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
                 },
                 shape = RoundedCornerShape(15)
             ) {
-                Text("Continue",
+                Text(
+                    "Continue",
                     fontFamily = mulishFontFamily(),
                     fontWeight = FontWeight.Bold,
                 )
