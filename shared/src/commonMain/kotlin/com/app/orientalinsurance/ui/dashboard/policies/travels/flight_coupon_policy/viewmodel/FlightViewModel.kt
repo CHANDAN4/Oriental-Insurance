@@ -96,12 +96,10 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
 
 
     private val responseBasicDetails_ = MutableStateFlow<ApiState<ResponseBasicDetails>>(ApiState.Empty)
-
     val responseBasicDetails: StateFlow<ApiState<ResponseBasicDetails>> = responseBasicDetails_
 
-
     fun basicDetails(requestLogin: RequestBasicDetails) {
-
+        responseBasicDetails_.value= ApiState.Loading
         viewModelScope.launch {
             repo?.basicDetails(requestLogin)
                 ?.catch { e ->
@@ -116,10 +114,10 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
 
 
     var id: String?=null
-    private val responseTravelQuote_ = MutableStateFlow<ApiState<ResponseTravelQuote>>(ApiState.Loading)
+    private val responseTravelQuote_ = MutableStateFlow<ApiState<ResponseTravelQuote>>(ApiState.Empty)
     val responseTravelQuote: StateFlow<ApiState<ResponseTravelQuote>> = responseTravelQuote_
     fun travelQuote(requestLogin: RequestProposalQuote, id: String?) {
-
+        responseTravelQuote_.value= ApiState.Loading
         viewModelScope.launch {
             repo?.travelQuote(requestLogin,id)
                 ?.catch { e ->
@@ -133,13 +131,13 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     }
 
 
-    private val responseChooseOffice_ = MutableStateFlow<ApiState<ResponseChooseOffice>>(ApiState.Loading)
+    private val responseChooseOffice_ = MutableStateFlow<ApiState<ResponseChooseOffice>>(ApiState.Empty)
 
     val responseChooseOffice: StateFlow<ApiState<ResponseChooseOffice>> = responseChooseOffice_
 
 
     fun chooseOffice(requestLogin: RequestBranchOffice) {
-
+        responseChooseOffice_.value= ApiState.Loading
         viewModelScope.launch {
             repo?.branchOffice(requestLogin)
                 ?.catch { e ->
@@ -153,13 +151,13 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     }
 
 
-    private val responseCreateFlight_ = MutableStateFlow<ApiState<ResponseCreateFlight>>(ApiState.Loading)
+    private val responseCreateFlight_ = MutableStateFlow<ApiState<ResponseCreateFlight>>(ApiState.Empty)
 
     val responseCreateFlight: StateFlow<ApiState<ResponseCreateFlight>> = responseCreateFlight_
 
 
     fun create(requestLogin: RequestProposalCreate, id: String?) {
-
+        responseCreateFlight_.value= ApiState.Loading
         viewModelScope.launch {
             repo?.create(requestLogin,id)
                 ?.catch { e ->

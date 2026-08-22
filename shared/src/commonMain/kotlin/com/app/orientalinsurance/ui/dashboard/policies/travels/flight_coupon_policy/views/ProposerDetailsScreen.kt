@@ -92,12 +92,7 @@ fun ProposerDetailsScreen(flightViewModel: FlightViewModel, navController: NavHo
     when (val result = response) {
 
         is ApiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                CircularProgressIndicator()
-            }
+
         }
 
         is ApiState.Success -> {
@@ -105,328 +100,324 @@ fun ProposerDetailsScreen(flightViewModel: FlightViewModel, navController: NavHo
         }
 
         is ApiState.Error -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = result.message,
-                    fontFamily = mulishFontFamily(),
-                    fontWeight = FontWeight.Normal,
-                )
-            }
+
         }
 
         is ApiState.Empty -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Data Not Found",
-                    fontFamily = mulishFontFamily(),
-                    fontWeight = FontWeight.Normal,
-                )
-            }
+
         }
 
     }
 
 
-    Scaffold(
+    Box(modifier = Modifier.fillMaxSize()) {
 
-        topBar = {
-            Surface(
-                shadowElevation = 8.dp,
-                color = Color(0xFFF2F2FF)
-            ) {
-                TopAppBar(
-                    title = {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(
-                                modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
-                                text = "Flight Coupon Policy",
-                                textAlign = TextAlign.Left,
-                                fontFamily = mulishFontFamily(),
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color.Black,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
-                                    .clickable {
-                                        policySummary=true
-                                    },
-                                text = "Policy Summary",
-                                textAlign = TextAlign.Left,
-                                fontFamily = mulishFontFamily(),
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
-                                color = Color(0xFFC85100)
-                            )
+        Scaffold(
+            topBar = {
+                Surface(
+                    shadowElevation = 8.dp,
+                    color = Color(0xFFF2F2FF)
+                ) {
+                    TopAppBar(
+                        title = {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
+                                    text = "Flight Coupon Policy",
+                                    textAlign = TextAlign.Left,
+                                    fontFamily = mulishFontFamily(),
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color.Black,
+                                    fontSize = 18.sp
+                                )
+                                Text(
+                                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
+                                        .clickable {
+                                            policySummary=true
+                                        },
+                                    text = "Policy Summary",
+                                    textAlign = TextAlign.Left,
+                                    fontFamily = mulishFontFamily(),
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 14.sp,
+                                    color = Color(0xFFC85100)
+                                )
+                            }
+                        },
+                        navigationIcon = {
+
+                            IconButton(
+                                onClick = {
+                                    navController.navigateUp()
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Default.ArrowBack,
+                                    contentDescription = "Back"
+                                )
+                            }
+
                         }
-                    },
-                    navigationIcon = {
+                    )
+                }
 
-                        IconButton(
-                            onClick = {
-                                navController.navigateUp()
+            },
+            bottomBar = {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(
+                        topStart = 20.dp,
+                        topEnd = 20.dp
+                    ),
+                    shadowElevation = 10.dp,
+                    color = Color.White
+                ) {
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(
+                            horizontal = 15.dp,
+                            vertical = 15.dp
+                        ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Column(
+                            modifier = Modifier.weight(1f).clickable{
+                                primumBreakup=true
                             }
                         ) {
-                            Icon(
-                                Icons.Default.ArrowBack,
-                                 contentDescription = "Back"
+
+                            Text(
+                                text = "₹ ${flightViewModel.totalAmt}",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Spacer(Modifier.height(4.dp))
+
+                            Text(
+                                text = "View Premium Breakup",
+                                color = Color(0xFFC46A09),
+                                textDecoration = TextDecoration.Underline,
+                                fontSize = 15.sp
                             )
                         }
 
+                        Button(
+                            onClick = {
+                                flightViewModel.disabilityStatus=selectedDisabilityStatus
+                                flightViewModel.whileChairStatus=selectedConfinedStatus
+                                val req=RequestProposalAdditionalDetails(
+                                    age = null,
+                                    agentBrokerType = null,
+                                    airlinesCompany = flightViewModel?.airlineCom!!,
+                                    countryOfVisit = "",
+                                    dateOfBirth = "",
+                                    dateOfTravel = flightViewModel.dateOfTravel,
+                                    desCityCode = "",
+                                    desStateCode = "",
+                                    destinationCity = "",
+                                    destinationState = "",
+                                    disabled = disabilityStatus,
+                                    endDate = "",
+                                    flightNo = flightViewModel.flightNo!!,
+                                    gender = "",
+                                    identificationNo = "",
+                                    identityProof = "",
+                                    memberDetails = emptyList(),
+                                    memberDetailsFlag = null,
+                                    members = emptyList(),
+                                    nationality = "INDIAN",
+                                    originCity = "",
+                                    originCityCode = "",
+                                    originState = "",
+                                    originStateCode = "",
+                                    physicalDisabilityEx = null,
+                                    proposalMainResponse = null,
+                                    proposerOccupation = "",
+                                    proposerPassportNo = "",
+                                    proposerPedStatus = "",
+                                    proposerWinterSports = "",
+                                    purposeOfVisit = "",
+                                    sourceType = null,
+                                    startDate = "",
+                                    visitingSchengenCountries = null,
+                                    wheelChair = selectedConfinedStatus
+                                )
+                                flightViewModel.additionalDetails(req,flightViewModel.id)
+                            },
+                            modifier = Modifier.width(150.dp).height(50.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFC85A00)
+                            )
+                        ) {
+
+                            Text(
+                                "Continue",
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontFamily = mulishFontFamily(),
+                                fontWeight = FontWeight.Bold
+                            )
+
+                        }
                     }
+                }
+            }
+        ) { padding ->
+
+            Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2FF)).padding(padding)) {
+                Spacer(modifier = Modifier.height(30.dp))
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
+                    text = "Proposer's Details",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Left,
+                    color = Color.Black,
+                    fontSize = 18.sp
                 )
+                Spacer(modifier = Modifier.height(50.dp))
+
+                Column(modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp)) {
+                    Text("Disability Status ? *",modifier = Modifier.padding(start = 10.dp), style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth().align(Alignment.Start)
+                    ) {
+                        listOf("Yes", "No").forEach { option ->
+                            OutlinedButton(
+                                onClick = {
+                                    selectedDisabilityStatus = option
+                                    if (selectedDisabilityStatus == "Yes") {
+                                        disabilityStatus = "Yes"
+                                    } else {
+                                        disabilityStatus = "No"
+                                    }
+
+                                },
+                                shape = RoundedCornerShape(10.dp), // Rounded shape
+                                border = BorderStroke(1.dp,
+                                    if (selectedDisabilityStatus == option) Color(0xFF005BAC) else Color(0xFFD9D9D9)
+                                ),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = if (selectedDisabilityStatus == option) Color.Blue.copy(alpha = 0.1f) else Color.White
+                                ),
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                Text(
+                                    option,
+                                    color = if (selectedDisabilityStatus == option) Color.Blue else Color.Black,
+                                    modifier = Modifier.width(110.dp).padding(top = 7.dp, bottom = 7.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+
+                    }
+
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+                Column(modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp)) {
+                    Text("Confined to wheelchair ? *",modifier = Modifier.padding(start = 10.dp), style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth().align(Alignment.Start)
+                    ) {
+                        listOf("Yes", "No").forEach { option ->
+                            OutlinedButton(
+                                onClick = {
+                                    selectedConfinedStatus = option
+                                    if (selectedConfinedStatus == "Yes") {
+                                        disabilityConfined = "Yes"
+                                    } else {
+                                        disabilityConfined = "No"
+                                    }
+
+                                },
+                                shape = RoundedCornerShape(10.dp), // Rounded shape
+                                border = BorderStroke(1.dp,
+                                    if (selectedConfinedStatus == option) Color(0xFF005BAC) else Color(0xFFD9D9D9)
+                                ),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = if (selectedConfinedStatus == option) Color.Blue.copy(alpha = 0.1f) else Color.White
+                                ),
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                Text(
+                                    option,
+                                    color = if (selectedConfinedStatus == option) Color.Blue else Color.Black,
+                                    modifier = Modifier.width(110.dp).padding(top = 7.dp, bottom = 7.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+
+                    }
+
+                }
+
+
             }
 
-        },
+        }
 
-        bottomBar = {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(
-                    topStart = 20.dp,
-                    topEnd = 20.dp
-                ),
-                shadowElevation = 10.dp,
-                color = Color.White
+        if (response is ApiState.Loading) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Color.Black.copy(alpha = 0.3f)
+                    ),
+                contentAlignment = Alignment.Center
             ) {
 
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(
-                        horizontal = 15.dp,
-                        vertical = 15.dp
-                    ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Column(
-                        modifier = Modifier.weight(1f).clickable{
-                            primumBreakup=true
-                        }
-                    ) {
-
-                        Text(
-                            text = "₹ ${flightViewModel.totalAmt}",
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Spacer(Modifier.height(4.dp))
-
-                        Text(
-                            text = "View Premium Breakup",
-                            color = Color(0xFFC46A09),
-                            textDecoration = TextDecoration.Underline,
-                            fontSize = 15.sp
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            flightViewModel.disabilityStatus=selectedDisabilityStatus
-                            flightViewModel.whileChairStatus=selectedConfinedStatus
-                            val req=RequestProposalAdditionalDetails(
-                                age = null,
-                                agentBrokerType = null,
-                                airlinesCompany = flightViewModel?.airlineCom!!,
-                                countryOfVisit = "",
-                                dateOfBirth = "",
-                                dateOfTravel = flightViewModel.dateOfTravel,
-                                desCityCode = "",
-                                desStateCode = "",
-                                destinationCity = "",
-                                destinationState = "",
-                                disabled = disabilityStatus,
-                                endDate = "",
-                                flightNo = flightViewModel.flightNo!!,
-                                gender = "",
-                                identificationNo = "",
-                                identityProof = "",
-                                memberDetails = emptyList(),
-                                memberDetailsFlag = null,
-                                members = emptyList(),
-                                nationality = "INDIAN",
-                                originCity = "",
-                                originCityCode = "",
-                                originState = "",
-                                originStateCode = "",
-                                physicalDisabilityEx = null,
-                                proposalMainResponse = null,
-                                proposerOccupation = "",
-                                proposerPassportNo = "",
-                                proposerPedStatus = "",
-                                proposerWinterSports = "",
-                                purposeOfVisit = "",
-                                sourceType = null,
-                                startDate = "",
-                                visitingSchengenCountries = null,
-                                wheelChair = selectedConfinedStatus
-                            )
-                            flightViewModel.additionalDetails(req,flightViewModel.id)
-                        },
-                        modifier = Modifier
-                            .width(150.dp)
-                            .height(50.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFC85A00)
-                        )
-                    ) {
-
-                        Text(
-                            "Continue",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            fontFamily = mulishFontFamily(),
-                            fontWeight = FontWeight.Bold
-                        )
-
-                    }
-                }
+                CircularProgressIndicator()
             }
         }
 
-    ) { padding ->
-
-        Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2FF)).padding(padding)) {
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(
-                modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
-                text = "Proposer's Details",
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left,
-                color = Color.Black,
-                fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.height(50.dp))
-
-            Column(modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp)) {
-                Text("Disability Status ? *",modifier = Modifier.padding(start = 10.dp), style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth().align(Alignment.Start)
-                ) {
-                    listOf("Yes", "No").forEach { option ->
-                        OutlinedButton(
-                            onClick = {
-                                selectedDisabilityStatus = option
-                                if (selectedDisabilityStatus == "Yes") {
-                                    disabilityStatus = "Yes"
-                                } else {
-                                    disabilityStatus = "No"
-                                }
-
-                            },
-                            shape = RoundedCornerShape(10.dp), // Rounded shape
-                            border = BorderStroke(1.dp,
-                                if (selectedDisabilityStatus == option) Color(0xFF005BAC) else Color(0xFFD9D9D9)
-                            ),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = if (selectedDisabilityStatus == option) Color.Blue.copy(alpha = 0.1f) else Color.White
-                            ),
-                            modifier = Modifier.padding(8.dp)
-                        ) {
-                            Text(
-                                option,
-                                color = if (selectedDisabilityStatus == option) Color.Blue else Color.Black,
-                                modifier = Modifier.width(110.dp).padding(top = 7.dp, bottom = 7.dp),
-                                textAlign = TextAlign.Center
-                            )
-                        }
+        if(policySummary){
+            ModalBottomSheet(
+                onDismissRequest = {
+                    scope.launch {
+                        sheetState.hide()
+                        policySummary = false
                     }
-
-                }
-
-            }
-            Spacer(modifier = Modifier.height(15.dp))
-            Column(modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp)) {
-                Text("Confined to wheelchair ? *",modifier = Modifier.padding(start = 10.dp), style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth().align(Alignment.Start)
-                ) {
-                    listOf("Yes", "No").forEach { option ->
-                        OutlinedButton(
-                            onClick = {
-                                selectedConfinedStatus = option
-                                if (selectedConfinedStatus == "Yes") {
-                                    disabilityConfined = "Yes"
-                                } else {
-                                    disabilityConfined = "No"
-                                }
-
-                            },
-                            shape = RoundedCornerShape(10.dp), // Rounded shape
-                            border = BorderStroke(1.dp,
-                                if (selectedConfinedStatus == option) Color(0xFF005BAC) else Color(0xFFD9D9D9)
-                            ),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = if (selectedConfinedStatus == option) Color.Blue.copy(alpha = 0.1f) else Color.White
-                            ),
-                            modifier = Modifier.padding(8.dp)
-                        ) {
-                            Text(
-                                option,
-                                color = if (selectedConfinedStatus == option) Color.Blue else Color.Black,
-                                modifier = Modifier.width(110.dp).padding(top = 7.dp, bottom = 7.dp),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-
-                }
-
+                },
+                sheetState = sheetState,
+                shape = RoundedCornerShape(
+                    topStart = 24.dp,
+                    topEnd = 24.dp
+                )
+            ) {
+                PolicySummaryProposerDetails(flightViewModel)
             }
 
+        }
+
+        if (primumBreakup) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    scopePA.launch {
+                        sheetStatePA.hide()
+                        primumBreakup = false
+                    }
+                },
+                sheetState = sheetStatePA,
+                shape = RoundedCornerShape(
+                    topStart = 24.dp,
+                    topEnd = 24.dp
+                )
+            ) {
+                PremiumSummaryProposalDetails(flightViewModel)
+            }
 
         }
 
     }
 
-
-    if(policySummary){
-        ModalBottomSheet(
-            onDismissRequest = {
-                scope.launch {
-                    sheetState.hide()
-                    policySummary = false
-                }
-            },
-            sheetState = sheetState,
-            shape = RoundedCornerShape(
-                topStart = 24.dp,
-                topEnd = 24.dp
-            )
-        ) {
-            PolicySummaryProposerDetails(flightViewModel)
-        }
-
-    }
-
-    if (primumBreakup) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                scopePA.launch {
-                    sheetStatePA.hide()
-                    primumBreakup = false
-                }
-            },
-            sheetState = sheetStatePA,
-            shape = RoundedCornerShape(
-                topStart = 24.dp,
-                topEnd = 24.dp
-            )
-        ) {
-            PremiumSummaryProposalDetails(flightViewModel)
-        }
-
-    }
 
 }
 

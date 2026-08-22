@@ -105,384 +105,383 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
     }
 
 
+    Box(modifier = Modifier.fillMaxSize()) {
 
-    when (val result = responseCreate) {
+        Scaffold(
 
-        is ApiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-
-        is ApiState.Success -> {
-            flightViewModel.branchOffice = chooseCity
-            proposalNumber=result.data.proposalNumber
-            isSuccessDialog=true
-        }
-
-        is ApiState.Error -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = result.message,
-                    fontFamily = mulishFontFamily(),
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-        }
-
-        is ApiState.Empty -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Data Not Found",
-                    fontFamily = mulishFontFamily(),
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-        }
-
-
-    }
-
-    Scaffold(
-
-        topBar = {
-            Surface(
-                shadowElevation = 8.dp,
-                color = Color(0xFFF2F2FF)
-            ) {
-                TopAppBar(
-                    title = {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(
-                                modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
-                                text = "Flight Coupon Policy",
-                                textAlign = TextAlign.Left,
-                                fontFamily = mulishFontFamily(),
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color.Black,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
-                                    .clickable {
-                                        policySummary = true
-                                        primumBreakup = false
-                                    },
-                                text = "Policy Summary",
-                                textAlign = TextAlign.Left,
-                                fontFamily = mulishFontFamily(),
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
-                                color = Color(0xFFC85100)
-                            )
-                        }
-
-                    },
-                    navigationIcon = {
-
-                        IconButton(
-                            onClick = {
-                                navController.navigateUp()
-                            }
-                        ) {
-                            Icon(
-                                Icons.Default.ArrowBack,
-                                contentDescription = "Back"
-                            )
-                        }
-
-                    }
-                )
-            }
-
-        },
-
-        bottomBar = {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(
-                    topStart = 20.dp,
-                    topEnd = 20.dp
-                ),
-                shadowElevation = 10.dp,
-                color = Color.White
-            ) {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(
-                        horizontal = 15.dp,
-                        vertical = 15.dp
-                    ),
-                    verticalAlignment = Alignment.CenterVertically
+            topBar = {
+                Surface(
+                    shadowElevation = 8.dp,
+                    color = Color(0xFFF2F2FF)
                 ) {
-
-                    Column(
-                        modifier = Modifier.weight(1f).clickable {
-                            primumBreakup = true
-                            policySummary = false
-                        }
-                    ) {
-
-                        Text(
-                            text = "₹ ${flightViewModel.totalAmt}",
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Spacer(Modifier.height(4.dp))
-
-                        Text(
-                            text = "View Premium Breakup",
-                            color = Color(0xFFC46A09),
-                            textDecoration = TextDecoration.Underline,
-                            fontSize = 15.sp
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            val request = RequestProposalCreate(
-                                branchAddress = flightViewModel?.branchAddress ?: "",
-                                branchEmail = flightViewModel?.branchEmail ?: "",
-                                branchOffice = flightViewModel?.branchOffice ?: "",
-                                branchOfficeId = flightViewModel?.branchOfficeId ?: "",
-                                officeCity = flightViewModel?.officeCity ?: "",
-                                saveProposalFlag = false,
-                                branchState = flightViewModel?.branchState ?: "",
-                            )
-                            flightViewModel.create(request, flightViewModel.id)
-                        },
-                        modifier = Modifier.width(150.dp)
-                            .height(50.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFC85A00)
-                        )
-                    ) {
-
-                        Text(
-                            "Continue",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            fontFamily = mulishFontFamily(),
-                            fontWeight = FontWeight.Bold
-                        )
-
-                    }
-                }
-            }
-        }
-
-    ) { padding ->
-
-        Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2FF)).padding(padding)) {
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(
-                modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
-                text = "Choose Office",
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left,
-                color = Color.Black,
-                fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.height(50.dp))
-
-            when (val res = responseChooseOffice) {
-
-                is ApiState.Success -> {
-
-                    val content = res.data.content
-                    BranchSearchField(
-                        content,
-                        onBranchSelected = {
-                            selectedChooseCity = it.officeCity+","+it.description+","+it.code
-                            flightViewModel.branchOffice = it.description
-                            flightViewModel.branchOfficeId = it.code
-                            flightViewModel.branchAddress = it.address
-                            flightViewModel.branchEmail = it.officeEmail
-                            flightViewModel.branchState = it.stateCode
-                            flightViewModel.branchName = it.description
-                            flightViewModel.branchCode_ = it.description
-                            flightViewModel.officeCity = it.description
+                    TopAppBar(
+                        title = {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
+                                    text = "Flight Coupon Policy",
+                                    textAlign = TextAlign.Left,
+                                    fontFamily = mulishFontFamily(),
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color.Black,
+                                    fontSize = 18.sp
+                                )
+                                Text(
+                                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
+                                        .clickable {
+                                            policySummary = true
+                                            primumBreakup = false
+                                        },
+                                    text = "Policy Summary",
+                                    textAlign = TextAlign.Left,
+                                    fontFamily = mulishFontFamily(),
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 14.sp,
+                                    color = Color(0xFFC85100)
+                                )
+                            }
 
                         },
-                        onSearch = {
-                            chooseCity=it
+                        navigationIcon = {
+
+                            IconButton(
+                                onClick = {
+                                    navController.navigateUp()
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Default.ArrowBack,
+                                    contentDescription = "Back"
+                                )
+                            }
+
                         }
                     )
+                }
+
+            },
+
+            bottomBar = {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(
+                        topStart = 20.dp,
+                        topEnd = 20.dp
+                    ),
+                    shadowElevation = 10.dp,
+                    color = Color.White
+                ) {
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(
+                            horizontal = 15.dp,
+                            vertical = 15.dp
+                        ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Column(
+                            modifier = Modifier.weight(1f).clickable {
+                                primumBreakup = true
+                                policySummary = false
+                            }
+                        ) {
+
+                            Text(
+                                text = "₹ ${flightViewModel.totalAmt}",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Spacer(Modifier.height(4.dp))
+
+                            Text(
+                                text = "View Premium Breakup",
+                                color = Color(0xFFC46A09),
+                                textDecoration = TextDecoration.Underline,
+                                fontSize = 15.sp
+                            )
+                        }
+
+                        Button(
+                            onClick = {
+                                val request = RequestProposalCreate(
+                                    branchAddress = flightViewModel?.branchAddress ?: "",
+                                    branchEmail = flightViewModel?.branchEmail ?: "",
+                                    branchOffice = flightViewModel?.branchOffice ?: "",
+                                    branchOfficeId = flightViewModel?.branchOfficeId ?: "",
+                                    officeCity = flightViewModel?.officeCity ?: "",
+                                    saveProposalFlag = false,
+                                    branchState = flightViewModel?.branchState ?: "",
+                                )
+                                flightViewModel.create(request, flightViewModel.id)
+                            },
+                            modifier = Modifier.width(150.dp)
+                                .height(50.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFC85A00)
+                            )
+                        ) {
+
+                            Text(
+                                "Continue",
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontFamily = mulishFontFamily(),
+                                fontWeight = FontWeight.Bold
+                            )
+
+                        }
+                    }
+                }
+            }
+
+        ) { padding ->
+
+            Column(
+                modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2FF)).padding(padding)
+            ) {
+                Spacer(modifier = Modifier.height(30.dp))
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
+                    text = "Choose Office",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Left,
+                    color = Color.Black,
+                    fontSize = 18.sp
+                )
+                Spacer(modifier = Modifier.height(50.dp))
+
+                when (val res = responseChooseOffice) {
+
+                    is ApiState.Success -> {
+
+                        val content = res.data.content
+                        BranchSearchField(
+                            content,
+                            onBranchSelected = {
+                                selectedChooseCity =
+                                    it.officeCity + "," + it.description + "," + it.code
+                                flightViewModel.branchOffice = it.description
+                                flightViewModel.branchOfficeId = it.code
+                                flightViewModel.branchAddress = it.address
+                                flightViewModel.branchEmail = it.officeEmail
+                                flightViewModel.branchState = it.stateCode
+                                flightViewModel.branchName = it.description
+                                flightViewModel.branchCode_ = it.description
+                                flightViewModel.officeCity = it.description
+
+                            },
+                            onSearch = {
+                                chooseCity = it
+                            }
+                        )
+
+                    }
+
+                    is ApiState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize().padding(top = 250.dp),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is ApiState.Error -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = res.message,
+                                fontFamily = mulishFontFamily(),
+                                fontWeight = FontWeight.Normal,
+                            )
+                        }
+                    }
+
+                    else -> {
+
+                    }
+                }
+
+                if (selectedChooseCity.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    OutlinedTextField(
+                        value = selectedChooseCity,
+                        onValueChange = { },
+                        modifier = Modifier.fillMaxWidth().height(80.dp)
+                            .padding(start = 20.dp, end = 20.dp),
+                        placeholder = {
+                            Text(
+                                buildAnnotatedString {
+                                    append("Branch Address ")
+                                    withStyle(
+                                        style = SpanStyle(color = Color.Red)
+                                    ) {
+                                        append("")
+                                    }
+                                },
+                                fontFamily = mulishFontFamily(),
+                                fontWeight = FontWeight.Normal
+                            )
+                        },
+
+                        // Floating label
+                        label = {
+                            Text(
+                                buildAnnotatedString {
+                                    append("Branch Address ")
+                                    withStyle(
+                                        style = SpanStyle(color = Color.Red)
+                                    ) {
+                                        append("")
+                                    }
+                                },
+                                fontFamily = mulishFontFamily(),
+                                fontWeight = FontWeight.Normal
+                            )
+                        },
+
+                        singleLine = true,
+
+                        shape = RoundedCornerShape(12.dp),
+
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done
+                        ),
+
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                // Handle Done
+                            }
+                        ),
+
+                        colors = OutlinedTextFieldDefaults.colors(
+
+                            // Background
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color(0xFFF5F5F5),
+
+                            // Border
+                            focusedBorderColor = Color(0xFFC85100),
+                            unfocusedBorderColor = Color.Gray,
+
+                            // Cursor
+                            cursorColor = Color(0xFFC85100),
+
+                            // Text
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+
+                            // Label
+                            focusedLabelColor = Color(0xFFC85100),
+                            unfocusedLabelColor = Color.Gray,
+
+                            // Placeholder
+                            focusedPlaceholderColor = Color.LightGray,
+                            unfocusedPlaceholderColor = Color.LightGray
+                        )
+                    )
+                }
+
+                if (policySummary) {
+                    ModalBottomSheet(
+                        onDismissRequest = {
+                            scope.launch {
+                                sheetState.hide()
+                                policySummary = false
+                            }
+                        },
+                        sheetState = sheetState,
+                        shape = RoundedCornerShape(
+                            topStart = 24.dp,
+                            topEnd = 24.dp
+                        )
+                    ) {
+                        PolicySummaryChooseOffice(flightViewModel)
+                    }
 
                 }
 
-                is ApiState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize().padding(top = 250.dp),
-                        contentAlignment = Alignment.TopCenter
+                if (primumBreakup) {
+                    ModalBottomSheet(
+                        onDismissRequest = {
+                            scopePA.launch {
+                                sheetStatePA.hide()
+                                primumBreakup = false
+                            }
+                        },
+                        sheetState = sheetStatePA,
+                        shape = RoundedCornerShape(
+                            topStart = 24.dp,
+                            topEnd = 24.dp
+                        )
                     ) {
+                        PrimumSummaryChooseOffice(flightViewModel)
+                    }
+
+                }
+
+                if (isSuccessDialog) {
+                    SuccessDialog(
+                        proposalNumber,
+                        onDismiss = {
+                            isSuccessDialog = false
+                        },
+                        onConfirm = {
+                            navController.navigate(Dashboards.FlightDetailsScreen.route)
+                            isSuccessDialog = false
+
+                        }
+                    )
+                }
+
+                if (responseCreate is ApiState.Loading) {
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Color.Black.copy(alpha = 0.3f)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+
                         CircularProgressIndicator()
                     }
                 }
 
-                is ApiState.Error -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = res.message,
-                            fontFamily = mulishFontFamily(),
-                            fontWeight = FontWeight.Normal,
-                        )
-                    }
-                }
-
-                else -> {
-
-                }
-            }
-
-            if (selectedChooseCity.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(20.dp))
-                OutlinedTextField(
-                    value = selectedChooseCity,
-                    onValueChange = { },
-                    modifier = Modifier.fillMaxWidth().height(80.dp).padding(start = 20.dp, end = 20.dp),
-                    placeholder = {
-                        Text(
-                            buildAnnotatedString {
-                                append("Branch Address ")
-                                withStyle(
-                                    style = SpanStyle(color = Color.Red)
-                                ) {
-                                    append("")
-                                }
-                            },
-                            fontFamily = mulishFontFamily(),
-                            fontWeight = FontWeight.Normal
-                        )
-                    },
-
-                    // Floating label
-                    label = {
-                        Text(
-                            buildAnnotatedString {
-                                append("Branch Address ")
-                                withStyle(
-                                    style = SpanStyle(color = Color.Red)
-                                ) {
-                                    append("")
-                                }
-                            },
-                            fontFamily = mulishFontFamily(),
-                            fontWeight = FontWeight.Normal
-                        )
-                    },
-
-                    singleLine = true,
-
-                    shape = RoundedCornerShape(12.dp),
-
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            // Handle Done
-                        }
-                    ),
-
-                    colors = OutlinedTextFieldDefaults.colors(
-
-                        // Background
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color(0xFFF5F5F5),
-
-                        // Border
-                        focusedBorderColor = Color(0xFFC85100),
-                        unfocusedBorderColor = Color.Gray,
-
-                        // Cursor
-                        cursorColor = Color(0xFFC85100),
-
-                        // Text
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black,
-
-                        // Label
-                        focusedLabelColor = Color(0xFFC85100),
-                        unfocusedLabelColor = Color.Gray,
-
-                        // Placeholder
-                        focusedPlaceholderColor = Color.LightGray,
-                        unfocusedPlaceholderColor = Color.LightGray
-                    )
-                )
-            }
-
-            if (policySummary) {
-                ModalBottomSheet(
-                    onDismissRequest = {
-                        scope.launch {
-                            sheetState.hide()
-                            policySummary = false
-                        }
-                    },
-                    sheetState = sheetState,
-                    shape = RoundedCornerShape(
-                        topStart = 24.dp,
-                        topEnd = 24.dp
-                    )
-                ) {
-                    PolicySummaryChooseOffice(flightViewModel)
-                }
-
-            }
-
-            if (primumBreakup) {
-                ModalBottomSheet(
-                    onDismissRequest = {
-                        scopePA.launch {
-                            sheetStatePA.hide()
-                            primumBreakup = false
-                        }
-                    },
-                    sheetState = sheetStatePA,
-                    shape = RoundedCornerShape(
-                        topStart = 24.dp,
-                        topEnd = 24.dp
-                    )
-                ) {
-                    PrimumSummaryChooseOffice(flightViewModel)
-                }
-
-            }
-
-            if(isSuccessDialog){
-                SuccessDialog(
-                    proposalNumber,
-                    onDismiss = {
-                        isSuccessDialog=false
-                    },
-                    onConfirm = {
-                        navController.navigate(Dashboards.FlightDetailsScreen.route)
-                        isSuccessDialog=false
-
-                    }
-                )
             }
 
         }
+
+    }
+
+    when (val result = responseCreate) {
+
+        is ApiState.Loading -> {
+
+        }
+
+        is ApiState.Success -> {
+            flightViewModel.branchOffice = chooseCity
+            proposalNumber = result.data.proposalNumber
+            isSuccessDialog = true
+        }
+
+        is ApiState.Error -> {
+
+        }
+
+        is ApiState.Empty -> {
+
+        }
+
 
     }
 
@@ -494,7 +493,7 @@ fun ChooseOfficeScreen(flightViewModel: FlightViewModel, navController: NavHostC
 fun BranchSearchField(
     branches: List<Content>,
     onBranchSelected: (Content) -> Unit,
-    onSearch:(String)->Unit
+    onSearch: (String) -> Unit
 ) {
 
     var query by remember { mutableStateOf("") }
@@ -584,7 +583,6 @@ fun BranchSearchField(
 
 
     }
-
 
 
 }
@@ -1144,7 +1142,7 @@ fun SuccessDialog(
                         start = 30.dp,
                         end = 30.dp,
                         top = 30.dp,
-                        bottom = 30.dp
+                        bottom = 20.dp
                     )
             ) {
 
@@ -1156,7 +1154,7 @@ fun SuccessDialog(
                     color = Color(0xFFC85A00)
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(15.dp))
 
                 // Message
                 Text(
@@ -1182,7 +1180,7 @@ fun SuccessDialog(
                     fontWeight = FontWeight.Normal
                 )
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(15.dp))
 
                 // Buttons
                 Row(

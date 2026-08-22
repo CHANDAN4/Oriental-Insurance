@@ -73,7 +73,7 @@ import kotlinx.coroutines.launch
 fun CoverAmountScreen(flightViewModel: FlightViewModel, navController: NavHostController) {
 
     val response by flightViewModel.responseTravelQuote.collectAsState()
-    var coverAmt by remember { mutableStateOf(flightViewModel.coverAmt?:"") }
+    var coverAmt by remember { mutableStateOf(flightViewModel.coverAmt ?: "") }
     var isClick by remember { mutableStateOf(false) }
     val isEnable by remember(coverAmt) {
         derivedStateOf {
@@ -84,281 +84,283 @@ fun CoverAmountScreen(flightViewModel: FlightViewModel, navController: NavHostCo
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
 
-    when (val result = response) {
 
-        is ApiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(top = 230.dp),
-                contentAlignment = Alignment.TopCenter
+
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        Scaffold(
+            topBar = {
+                Surface(
+                    shadowElevation = 8.dp,
+                    color = Color(0xFFF2F2FF)
+                ) {
+                    TopAppBar(
+                        title = {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
+                                    text = "Flight Coupon Policy",
+                                    textAlign = TextAlign.Left,
+                                    fontFamily = mulishFontFamily(),
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color.Black,
+                                    fontSize = 18.sp
+                                )
+                                Text(
+                                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
+                                        .clickable {
+                                            policySummary = true
+                                        },
+                                    text = "Policy Summary",
+                                    textAlign = TextAlign.Left,
+                                    fontFamily = mulishFontFamily(),
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 14.sp,
+                                    color = Color(0xFFC85100)
+                                )
+                            }
+
+                        },
+                        navigationIcon = {
+
+                            IconButton(
+                                onClick = {
+                                    navController.navigateUp()
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Default.ArrowBack,
+                                    contentDescription = "Back"
+                                )
+                            }
+
+                        }
+                    )
+                }
+
+            }
+        ) { padding ->
+
+            Column(
+                modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2FF)).padding(padding)
             ) {
+                Spacer(modifier = Modifier.height(30.dp))
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
+                    text = "Add Cover Amount",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Left,
+                    color = Color.Black,
+                    fontSize = 18.sp
+                )
+                Spacer(modifier = Modifier.height(50.dp))
+
+                OutlinedTextField(
+                    value = coverAmt,
+                    onValueChange = { coverAmt = it },
+
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp),
+
+                    // Hint
+                    placeholder = {
+                        Text(
+                            buildAnnotatedString {
+                                append("Cover Amount ")
+                                withStyle(
+                                    style = SpanStyle(color = Color.Red)
+                                ) {
+                                    append("*")
+                                }
+                            },
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Normal
+                        )
+                    },
+
+                    // Floating label
+                    label = {
+                        Text(
+                            buildAnnotatedString {
+                                append("Cover Amount ")
+                                withStyle(
+                                    style = SpanStyle(color = Color.Red)
+                                ) {
+                                    append("*")
+                                }
+                            },
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Normal
+                        )
+                    },
+
+                    singleLine = true,
+
+                    shape = RoundedCornerShape(12.dp),
+
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            // Handle Done
+                        }
+                    ),
+
+                    colors = OutlinedTextFieldDefaults.colors(
+
+                        // Background
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color(0xFFF5F5F5),
+
+                        // Border
+                        focusedBorderColor = Color(0xFFC85100),
+                        unfocusedBorderColor = Color.Gray,
+
+                        // Cursor
+                        cursorColor = Color(0xFFC85100),
+
+                        // Text
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+
+                        // Label
+                        focusedLabelColor = Color(0xFFC85100),
+                        unfocusedLabelColor = Color.Gray,
+
+                        // Placeholder
+                        focusedPlaceholderColor = Color.LightGray,
+                        unfocusedPlaceholderColor = Color.LightGray
+                    )
+                )
+                if (coverAmt.isNotEmpty()) {
+                    if (coverAmt.toInt() < 100000) {
+                        Text(
+                            text = "Cover amount must be between ₹100000 to ₹2500000",
+                            color = MaterialTheme.colorScheme.error,
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Normal,
+                            modifier = Modifier.padding(start = 20.dp, top = 4.dp)
+                        )
+                    } else if (coverAmt.toInt() > 2500000) {
+                        Text(
+                            text = "Cover amount must be between ₹100000 to ₹2500000",
+                            color = MaterialTheme.colorScheme.error,
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Normal,
+                            modifier = Modifier.padding(start = 20.dp, top = 4.dp)
+                        )
+                    }
+                }
+
+                if (coverAmt.isEmpty() && isClick) {
+                    Text(
+                        text = "Cover amount must be between ₹100000 to ₹2500000",
+                        color = MaterialTheme.colorScheme.error,
+                        fontFamily = mulishFontFamily(),
+                        fontWeight = FontWeight.Normal,
+                        modifier = Modifier.padding(start = 20.dp, top = 4.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(50.dp))
+
+                Button(
+                    enabled = isEnable,
+                    modifier = Modifier.fillMaxWidth().height(50.dp)
+                        .padding(start = 20.dp, end = 20.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFC85100), // Background color
+                        contentColor = Color.White          // Text color
+                    ),
+                    onClick = {
+                        isClick = true
+                        flightViewModel.coverAmt = coverAmt
+                        val req = RequestProposalQuote(coverAmt.toInt())
+                        flightViewModel.travelQuote(req, flightViewModel.id)
+
+                    },
+                    shape = RoundedCornerShape(15)
+                ) {
+                    Text(
+                        "Continue",
+                        fontFamily = mulishFontFamily(),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+            }
+
+        }
+
+        if (policySummary) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    scope.launch {
+                        sheetState.hide()
+                        policySummary = false
+                    }
+                },
+                sheetState = sheetState,
+                shape = RoundedCornerShape(
+                    topStart = 24.dp,
+                    topEnd = 24.dp
+                )
+            ) {
+                PolicySummaryCover(flightViewModel)
+            }
+
+        }
+
+        if (response is ApiState.Loading) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Color.Black.copy(alpha = 0.3f)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+
                 CircularProgressIndicator()
             }
         }
 
+    }
+
+
+    when (val result = response) {
         is ApiState.Success -> {
-            println("Quote Response :${result.data}")
-            flightViewModel.totalAmt = "" + result.data.finalPremium
-            flightViewModel.basicPreAmt = "" + result.data.basicPremium
-            flightViewModel.minPreAmt = "" + result.data.minimumPremiumApportionment
-            flightViewModel.gst = "" + result.data.gst
-            navController.navigate(Dashboards.ChooseOfficeScreen.route)
+            LaunchedEffect(result) {
+                println("Quote Response :${result.data}")
+                flightViewModel.totalAmt = "" + result.data.finalPremium
+                flightViewModel.basicPreAmt = "" + result.data.basicPremium
+                flightViewModel.minPreAmt = "" + result.data.minimumPremiumApportionment
+                flightViewModel.gst = "" + result.data.gst
+                navController.navigate(Dashboards.ChooseOfficeScreen.route)
+            }
         }
 
         is ApiState.Error -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = result.message,
-                    fontFamily = mulishFontFamily(),
-                    fontWeight = FontWeight.Normal,
-                )
-            }
+
+            // Show error
+            // Snackbar/Dialog recommended
         }
 
         is ApiState.Empty -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Data Not Found",
-                    fontFamily = mulishFontFamily(),
-                    fontWeight = FontWeight.Normal,
-                )
-            }
+
         }
 
+        is ApiState.Loading -> {
 
+        }
     }
 
-    Scaffold(
-
-        topBar = {
-            Surface(
-                shadowElevation = 8.dp,
-                color = Color(0xFFF2F2FF)
-            ) {
-                TopAppBar(
-                    title = {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(
-                                modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
-                                text = "Flight Coupon Policy",
-                                textAlign = TextAlign.Left,
-                                fontFamily = mulishFontFamily(),
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color.Black,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                modifier = Modifier.fillMaxWidth().padding(start = 10.dp).clickable{
-                                    policySummary=true
-                                },
-                                text = "Policy Summary",
-                                textAlign = TextAlign.Left,
-                                fontFamily = mulishFontFamily(),
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
-                                color = Color(0xFFC85100)
-                            )
-                        }
-
-                    },
-                    navigationIcon = {
-
-                        IconButton(
-                            onClick = {
-                                navController.navigateUp()
-                            }
-                        ) {
-                            Icon(
-                                Icons.Default.ArrowBack,
-                                contentDescription = "Back"
-                            )
-                        }
-
-                    }
-                )
-            }
-
-        }
-
-    ) { padding ->
-
-        Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2FF)).padding(padding)) {
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(
-                modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
-                text = "Add Cover Amount",
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left,
-                color = Color.Black,
-                fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.height(50.dp))
-
-            OutlinedTextField(
-                value = coverAmt,
-                onValueChange = { coverAmt = it },
-
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp),
-
-                // Hint
-                placeholder = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Cover Amount ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                // Floating label
-                label = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Cover Amount ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                singleLine = true,
-
-                shape = RoundedCornerShape(12.dp),
-
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        // Handle Done
-                    }
-                ),
-
-                colors = OutlinedTextFieldDefaults.colors(
-
-                    // Background
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color(0xFFF5F5F5),
-
-                    // Border
-                    focusedBorderColor = Color(0xFFC85100),
-                    unfocusedBorderColor = Color.Gray,
-
-                    // Cursor
-                    cursorColor = Color(0xFFC85100),
-
-                    // Text
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-
-                    // Label
-                    focusedLabelColor = Color(0xFFC85100),
-                    unfocusedLabelColor = Color.Gray,
-
-                    // Placeholder
-                    focusedPlaceholderColor = Color.LightGray,
-                    unfocusedPlaceholderColor = Color.LightGray
-                )
-            )
-            if (coverAmt.isNotEmpty()) {
-                if (coverAmt.toInt() < 100000) {
-                    Text(
-                        text = "Cover amount must be between ₹100000 to ₹2500000",
-                        color = MaterialTheme.colorScheme.error,
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(start = 20.dp, top = 4.dp)
-                    )
-                } else if (coverAmt.toInt() > 2500000) {
-                    Text(
-                        text = "Cover amount must be between ₹100000 to ₹2500000",
-                        color = MaterialTheme.colorScheme.error,
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(start = 20.dp, top = 4.dp)
-                    )
-                }
-            }
-
-            if (coverAmt.isEmpty() && isClick) {
-                Text(
-                    text = "Cover amount must be between ₹100000 to ₹2500000",
-                    color = MaterialTheme.colorScheme.error,
-                    fontFamily = mulishFontFamily(),
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier.padding(start = 20.dp, top = 4.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(50.dp))
-
-            Button(
-                enabled = isEnable,
-                modifier = Modifier.fillMaxWidth().height(50.dp)
-                    .padding(start = 20.dp, end = 20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFC85100), // Background color
-                    contentColor = Color.White          // Text color
-                ),
-                onClick = {
-                    isClick = true
-                    flightViewModel.coverAmt=coverAmt
-                    val req = RequestProposalQuote(coverAmt.toInt())
-                    flightViewModel.travelQuote(req, flightViewModel.id)
-
-                },
-                shape = RoundedCornerShape(15)
-            ) {
-                Text(
-                    "Continue",
-                    fontFamily = mulishFontFamily(),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-        }
-
-    }
-
-    if(policySummary){
-        ModalBottomSheet(
-            onDismissRequest = {
-                scope.launch {
-                    sheetState.hide()
-                    policySummary = false
-                }
-            },
-            sheetState = sheetState,
-            shape = RoundedCornerShape(
-                topStart = 24.dp,
-                topEnd = 24.dp
-            )
-        ) {
-            PolicySummaryCover(flightViewModel)
-        }
-
-    }
 
 
 }
@@ -677,4 +679,6 @@ fun PolicySummaryCover(flightViewModel: FlightViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
     }
+
+
 }
