@@ -1,6 +1,7 @@
 package com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views
 
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,8 +14,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,10 +30,14 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -43,6 +51,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -69,24 +78,39 @@ import com.app.orientalinsurance.ui.font.mulishFontFamily
 import com.app.orientalinsurance.ui.login.models.RequestLogin
 import com.app.orientalinsurance.utils.ShowDatePicker
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
+import orientalinsurance.shared.generated.resources.Res
+import orientalinsurance.shared.generated.resources.businessman
+import orientalinsurance.shared.generated.resources.businesswoman
+import orientalinsurance.shared.generated.resources.other
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NomineeScreen(flightViewModel: FlightViewModel, navController: NavHostController) {
 
     val responseSaveData by flightViewModel.responseSaveData.collectAsState()
-    var flightNo by remember { mutableStateOf(flightViewModel.flightNo?:"") }
-    var airLineComp by remember { mutableStateOf(flightViewModel.airlineCom?:"") }
-    var selectedDateOfTravel by remember { mutableStateOf(flightViewModel.flightSelDate?:"") }
+    var nomineeName by remember { mutableStateOf(flightViewModel.flightNo ?: "") }
+
+    var selectedRelationShip by remember { mutableStateOf("Mr") }
+    var expanded by remember { mutableStateOf(false) }
+    val relationShipList = listOf("Father", "Mother", "Daughter","Gran-Son")
+
+    var selectedDateOfBirth by remember { mutableStateOf(flightViewModel.flightSelDate ?: "") }
     var isClick by remember { mutableStateOf(false) }
-    val isEnable by remember(flightNo, airLineComp, selectedDateOfTravel) {
+    val isEnable by remember(nomineeName, selectedRelationShip, selectedDateOfBirth) {
         derivedStateOf {
-            flightNo.isNotBlank() && airLineComp.isNotBlank() && selectedDateOfTravel.isNotEmpty()
+            nomineeName.isNotBlank() && selectedRelationShip.isNotBlank() && selectedDateOfBirth.isNotEmpty()
         }
     }
     var showPicker by remember {
         mutableStateOf(false)
     }
+
+    val list = listOf("Male", "Female", "Other")
+    val images = listOf(Res.drawable.businessman, Res.drawable.businesswoman, Res.drawable.other)
+    var selectedIndex by remember { mutableIntStateOf(if (flightViewModel?.selectedGender == "Male") 0 else if (flightViewModel?.selectedGender == "Female") 1 else if (flightViewModel?.selectedGender == "Other") 2 else -1) }
+    var selectedGender by remember { mutableStateOf(flightViewModel?.selectedGender ?: "") }
+
 
     var policySummary by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -98,12 +122,7 @@ fun NomineeScreen(flightViewModel: FlightViewModel, navController: NavHostContro
     when (val result = responseSaveData) {
 
         is ApiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(top = 250.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                CircularProgressIndicator()
-            }
+
         }
 
         is ApiState.Success -> {
@@ -124,466 +143,559 @@ fun NomineeScreen(flightViewModel: FlightViewModel, navController: NavHostContro
         }
 
         is ApiState.Empty -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Data Not Found",
-                    fontFamily = mulishFontFamily(),
-                    fontWeight = FontWeight.Normal,
-                )
-            }
+
         }
 
     }
 
-    Scaffold(
+    Box(modifier = Modifier.fillMaxSize()) {
 
-        topBar = {
-            Surface(
-                shadowElevation = 8.dp,
-                color = Color(0xFFF2F2FF)
-            ) {
-                TopAppBar(
-                    title = {
-                        Column(modifier = Modifier.fillMaxWidth()) {
+        Scaffold(
+
+            topBar = {
+                Surface(
+                    shadowElevation = 8.dp,
+                    color = Color(0xFFF2F2FF)
+                ) {
+                    TopAppBar(
+                        title = {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
+                                    text = "Flight Coupon Policy",
+                                    textAlign = TextAlign.Left,
+                                    fontFamily = mulishFontFamily(),
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color.Black,
+                                    fontSize = 18.sp
+                                )
+                                Text(
+                                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
+                                        .clickable {
+                                            policySummary = true
+                                        },
+                                    text = "Policy Summary",
+                                    textAlign = TextAlign.Left,
+                                    fontFamily = mulishFontFamily(),
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 14.sp,
+                                    color = Color(0xFFC85100)
+                                )
+                            }
+
+                        },
+                        navigationIcon = {
+
+                            IconButton(
+                                onClick = {
+                                    navController.navigateUp()
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Default.ArrowBack,
+                                    contentDescription = "Back"
+                                )
+                            }
+
+                        }
+                    )
+                }
+
+            },
+
+            bottomBar = {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(
+                        topStart = 20.dp,
+                        topEnd = 20.dp
+                    ),
+                    shadowElevation = 10.dp,
+                    color = Color.White
+                ) {
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(
+                            horizontal = 15.dp,
+                            vertical = 15.dp
+                        ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Column(
+                            modifier = Modifier.weight(1f).clickable {
+                                primumBreakup = true
+                            }
+                        ) {
+
                             Text(
-                                modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
-                                text = "Flight Coupon Policy",
-                                textAlign = TextAlign.Left,
-                                fontFamily = mulishFontFamily(),
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color.Black,
-                                fontSize = 18.sp
+                                text = "₹ ${flightViewModel.totalAmt}",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold
                             )
+
+                            Spacer(Modifier.height(4.dp))
+
                             Text(
-                                modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
-                                    .clickable {
-                                        policySummary = true
-                                    },
-                                text = "Policy Summary",
-                                textAlign = TextAlign.Left,
-                                fontFamily = mulishFontFamily(),
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
-                                color = Color(0xFFC85100)
+                                text = "View Premium Breakup",
+                                color = Color(0xFFC46A09),
+                                textDecoration = TextDecoration.Underline,
+                                fontSize = 15.sp
                             )
                         }
 
-                    },
-                    navigationIcon = {
+                        Button(
+                            onClick = {
+                                navController.navigate(Dashboards.PreviewDetails.route)
+                            },
+                            modifier = Modifier
+                                .width(150.dp)
+                                .height(50.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFC85A00)
+                            )
+                        ) {
 
+                            Text(
+                                "Continue",
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontFamily = mulishFontFamily(),
+                                fontWeight = FontWeight.Bold
+                            )
+
+                        }
+                    }
+                }
+            }
+
+        ) { padding ->
+
+            Column(
+                modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2FF)).padding(padding)
+            ) {
+                Spacer(modifier = Modifier.height(30.dp))
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
+                    text = "Nominee Details",
+                    fontFamily = mulishFontFamily(),
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Left,
+                    color = Color.Black,
+                    fontSize = 18.sp
+                )
+                Spacer(modifier = Modifier.height(50.dp))
+
+                OutlinedTextField(
+                    value = nomineeName,
+                    onValueChange = { nomineeName = it },
+
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp),
+
+                    // Hint
+                    placeholder = {
+                        Text(
+                            buildAnnotatedString {
+                                append("Name ")
+                                withStyle(
+                                    style = SpanStyle(color = Color.Red)
+                                ) {
+                                    append("*")
+                                }
+                            },
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Normal
+                        )
+                    },
+
+                    // Floating label
+                    label = {
+                        Text(
+                            buildAnnotatedString {
+                                append("Name ")
+                                withStyle(
+                                    style = SpanStyle(color = Color.Red)
+                                ) {
+                                    append("*")
+                                }
+                            },
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Normal
+                        )
+                    },
+
+                    singleLine = true,
+
+                    shape = RoundedCornerShape(12.dp),
+
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    ),
+
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            // Handle Done
+                        }
+                    ),
+
+                    colors = OutlinedTextFieldDefaults.colors(
+
+                        // Background
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color(0xFFF5F5F5),
+
+                        // Border
+                        focusedBorderColor = Color(0xFFC85100),
+                        unfocusedBorderColor = Color.Gray,
+
+                        // Cursor
+                        cursorColor = Color(0xFFC85100),
+
+                        // Text
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+
+                        // Label
+                        focusedLabelColor = Color(0xFFC85100),
+                        unfocusedLabelColor = Color.Gray,
+
+                        // Placeholder
+                        focusedPlaceholderColor = Color.LightGray,
+                        unfocusedPlaceholderColor = Color.LightGray
+                    )
+                )
+                if (nomineeName.isEmpty() && isClick) {
+
+                    Text(
+                        text = "Please enter nominee name.",
+                        color = MaterialTheme.colorScheme.error,
+                        fontFamily = mulishFontFamily(),
+                        fontWeight = FontWeight.Normal,
+                        modifier = Modifier.padding(start = 20.dp, top = 4.dp)
+                    )
+                } else if (nomineeName.isNotEmpty() && nomineeName.length < 2) {
+                    Text(
+                        text = "Please enter the name between 2 and 101 characters.",
+                        color = MaterialTheme.colorScheme.error,
+                        fontFamily = mulishFontFamily(),
+                        fontWeight = FontWeight.Normal,
+                        modifier = Modifier.padding(start = 20.dp, top = 4.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = {
+                        expanded = !expanded
+                    }
+                ) {
+                    OutlinedTextField(
+                        value = selectedRelationShip,
+                        onValueChange = {},
+                        readOnly = true,
+                        // Hint
+                        placeholder = {
+                            Text(
+                                buildAnnotatedString {
+                                    append("Relationship ")
+                                    withStyle(
+                                        style = SpanStyle(color = Color.Red)
+                                    ) {
+                                        append("*")
+                                    }
+                                },
+                                fontFamily = mulishFontFamily(),
+                                fontWeight = FontWeight.Normal
+                            )
+                        },
+
+                        // Floating label
+                        label = {
+                            Text(
+                                buildAnnotatedString {
+                                    append("Relationship ")
+                                    withStyle(
+                                        style = SpanStyle(color = Color.Red)
+                                    ) {
+                                        append("*")
+                                    }
+                                },
+                                fontFamily = mulishFontFamily(),
+                                fontWeight = FontWeight.Normal
+                            )
+                        },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = expanded
+                            )
+                        },
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = {
+                            expanded = false
+                        }
+                    ) {
+                        relationShipList.forEach { title ->
+                            DropdownMenuItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = {
+                                    Text(text = title)
+                                },
+                                onClick = {
+                                    selectedRelationShip = title
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+                if (selectedRelationShip == "Select Relationship" && isClick) {
+                    Text(
+                        text = "Please select nominee relation.",
+                        color = MaterialTheme.colorScheme.error,
+                        fontFamily = mulishFontFamily(),
+                        fontWeight = FontWeight.Normal,
+                        modifier = Modifier.padding(start = 20.dp, top = 4.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+                OutlinedTextField(
+                    value = selectedDateOfBirth,
+                    readOnly = true,
+                    onValueChange = {
+                        //selectedDateOfTravel = it
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp),
+                    // Hint
+                    placeholder = {
+                        Text(
+                            buildAnnotatedString {
+                                append("Date Of Birth ")
+                                withStyle(
+                                    style = SpanStyle(color = Color.Red)
+                                ) {
+                                    append("*")
+                                }
+                            },
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Normal
+                        )
+                    },
+
+                    // Floating label
+                    label = {
+                        Text(
+                            buildAnnotatedString {
+                                append("Date Of Birth  ")
+                                withStyle(
+                                    style = SpanStyle(color = Color.Red)
+                                ) {
+                                    append("*")
+                                }
+                            },
+                            fontFamily = mulishFontFamily(),
+                            fontWeight = FontWeight.Normal
+                        )
+                    },
+                    trailingIcon = {
                         IconButton(
                             onClick = {
-                                navController.navigateUp()
+                                showPicker = true
+                                // Open DatePicker here
                             }
                         ) {
                             Icon(
-                                Icons.Default.ArrowBack,
-                                contentDescription = "Back"
+                                imageVector = Icons.Default.DateRange,
+                                contentDescription = "Calendar",
+                                tint = Color.Gray
                             )
                         }
+                    },
 
+                    singleLine = true,
+
+                    shape = RoundedCornerShape(12.dp),
+
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            // Handle Done
+                        }
+                    ),
+
+                    colors = OutlinedTextFieldDefaults.colors(
+
+                        // Background
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color(0xFFF5F5F5),
+
+                        // Border
+                        focusedBorderColor = Color(0xFFC85100),
+                        unfocusedBorderColor = Color.Gray,
+
+                        // Cursor
+                        cursorColor = Color(0xFFC85100),
+
+                        // Text
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+
+                        // Label
+                        focusedLabelColor = Color(0xFFC85100),
+                        unfocusedLabelColor = Color.Gray,
+
+                        // Placeholder
+                        focusedPlaceholderColor = Color.LightGray,
+                        unfocusedPlaceholderColor = Color.LightGray
+                    )
+                )
+
+                LazyRow(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Absolute.SpaceEvenly,
+                    modifier = Modifier
+                        .padding(vertical = 10.dp)
+                        .fillMaxWidth()
+                ) {
+                    itemsIndexed(list) { index, item ->
+                        androidx.compose.material3.Button(
+                            modifier = Modifier
+                                .padding(0.dp, 0.dp, 8.dp, 0.dp)
+                                .weight(1 / 3f),
+                            shape = RoundedCornerShape(16.dp),
+                            onClick = {
+                                selectedIndex = index
+                                if (item == "Male") {
+                                    selectedGender = item
+                                } else if (item == "Female") {
+                                    selectedGender = item
+                                } else {
+                                    selectedGender = item
+                                }
+
+                            },
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = if (selectedIndex == index) Color(0xFF285FD6) else Color.Black,
+                                containerColor = if (selectedIndex == index) Color(0xFF285FD6) else Color.White
+                            ),
+                            border = if (selectedIndex == index) BorderStroke(
+                                1.dp, Color(0xFF285FD6)
+                            ) else BorderStroke(1.dp, Color.White),
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                androidx.compose.material3.Icon(
+                                    painterResource(images[index]),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(50.dp),
+                                )
+                                androidx.compose.material3.Text(item)
+                            }
+                        }
+                    }
+                }
+
+                if(selectedGender.isEmpty() && isClick){
+                    Text(
+                        text = "Please select Gender.",
+                        color = MaterialTheme.colorScheme.error,
+                        fontFamily = mulishFontFamily(),
+                        fontWeight = FontWeight.Normal,
+                        modifier = Modifier.padding(start = 20.dp, top = 4.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(50.dp))
+
+
+                ShowDatePicker(
+                    show = showPicker,
+                    onDismiss = {
+                        showPicker = false
+                    },
+                    onDateSelected = {
+                        selectedDateOfBirth = it
                     }
                 )
+
             }
 
-        },
+        }
 
-        bottomBar = {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
+
+        if (policySummary) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    scope.launch {
+                        sheetState.hide()
+                        policySummary = false
+                    }
+                },
+                sheetState = sheetState,
                 shape = RoundedCornerShape(
-                    topStart = 20.dp,
-                    topEnd = 20.dp
-                ),
-                shadowElevation = 10.dp,
-                color = Color.White
+                    topStart = 24.dp,
+                    topEnd = 24.dp
+                )
+            ) {
+                PolicySummaryNominee(flightViewModel)
+            }
+
+        }
+
+        if (primumBreakup) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    scopePA.launch {
+                        sheetStatePA.hide()
+                        primumBreakup = false
+                    }
+                },
+                sheetState = sheetStatePA,
+                shape = RoundedCornerShape(
+                    topStart = 24.dp,
+                    topEnd = 24.dp
+                )
+            ) {
+                PremiumSummaryNominee(flightViewModel)
+            }
+
+        }
+
+        if (responseSaveData is ApiState.Loading) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Color.Black.copy(alpha = 0.3f)
+                    ),
+                contentAlignment = Alignment.Center
             ) {
 
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(
-                        horizontal = 15.dp,
-                        vertical = 15.dp
-                    ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Column(
-                        modifier = Modifier.weight(1f).clickable{
-                            primumBreakup=true
-                        }
-                    ) {
-
-                        Text(
-                            text = "₹ ${flightViewModel.totalAmt}",
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Spacer(Modifier.height(4.dp))
-
-                        Text(
-                            text = "View Premium Breakup",
-                            color = Color(0xFFC46A09),
-                            textDecoration = TextDecoration.Underline,
-                            fontSize = 15.sp
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            navController.navigate(Dashboards.PreviewDetails.route)
-                        },
-                        modifier = Modifier
-                            .width(150.dp)
-                            .height(50.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFC85A00)
-                        )
-                    ) {
-
-                        Text(
-                            "Continue",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            fontFamily = mulishFontFamily(),
-                            fontWeight = FontWeight.Bold
-                        )
-
-                    }
-                }
+                CircularProgressIndicator()
             }
         }
 
-    ) { padding ->
-
-        Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2FF)).padding(padding)) {
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(
-                modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
-                text = "Nominee",
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left,
-                color = Color.Black,
-                fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.height(50.dp))
-
-            OutlinedTextField(
-                value = flightNo,
-                onValueChange = { flightNo = it },
-
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp),
-
-                // Hint
-                placeholder = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Flight No ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                // Floating label
-                label = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Flight No ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                singleLine = true,
-
-                shape = RoundedCornerShape(12.dp),
-
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Done
-                ),
-
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        // Handle Done
-                    }
-                ),
-
-                colors = OutlinedTextFieldDefaults.colors(
-
-                    // Background
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color(0xFFF5F5F5),
-
-                    // Border
-                    focusedBorderColor = Color(0xFFC85100),
-                    unfocusedBorderColor = Color.Gray,
-
-                    // Cursor
-                    cursorColor = Color(0xFFC85100),
-
-                    // Text
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-
-                    // Label
-                    focusedLabelColor = Color(0xFFC85100),
-                    unfocusedLabelColor = Color.Gray,
-
-                    // Placeholder
-                    focusedPlaceholderColor = Color.LightGray,
-                    unfocusedPlaceholderColor = Color.LightGray
-                )
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            OutlinedTextField(
-                value = airLineComp,
-                onValueChange = { airLineComp = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp),
-                // Hint
-                placeholder = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Airlines Company ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                // Floating label
-                label = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Airlines Company  ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                singleLine = true,
-
-                shape = RoundedCornerShape(12.dp),
-
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
-                ),
-
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        // Handle Done
-                    }
-                ),
-
-                colors = OutlinedTextFieldDefaults.colors(
-
-                    // Background
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color(0xFFF5F5F5),
-
-                    // Border
-                    focusedBorderColor = Color(0xFFC85100),
-                    unfocusedBorderColor = Color.Gray,
-
-                    // Cursor
-                    cursorColor = Color(0xFFC85100),
-
-                    // Text
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-
-                    // Label
-                    focusedLabelColor = Color(0xFFC85100),
-                    unfocusedLabelColor = Color.Gray,
-
-                    // Placeholder
-                    focusedPlaceholderColor = Color.LightGray,
-                    unfocusedPlaceholderColor = Color.LightGray
-                )
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            OutlinedTextField(
-                value = selectedDateOfTravel,
-                readOnly = true,
-                onValueChange = {
-                    //selectedDateOfTravel = it
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp),
-                // Hint
-                placeholder = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Date Of Travel ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                // Floating label
-                label = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Select Date Of Travel  ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            showPicker = true
-                            // Open DatePicker here
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Calendar",
-                            tint = Color.Gray
-                        )
-                    }
-                },
-
-                singleLine = true,
-
-                shape = RoundedCornerShape(12.dp),
-
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
-                ),
-
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        // Handle Done
-                    }
-                ),
-
-                colors = OutlinedTextFieldDefaults.colors(
-
-                    // Background
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color(0xFFF5F5F5),
-
-                    // Border
-                    focusedBorderColor = Color(0xFFC85100),
-                    unfocusedBorderColor = Color.Gray,
-
-                    // Cursor
-                    cursorColor = Color(0xFFC85100),
-
-                    // Text
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-
-                    // Label
-                    focusedLabelColor = Color(0xFFC85100),
-                    unfocusedLabelColor = Color.Gray,
-
-                    // Placeholder
-                    focusedPlaceholderColor = Color.LightGray,
-                    unfocusedPlaceholderColor = Color.LightGray
-                )
-            )
-
-            ShowDatePicker(
-                show = showPicker,
-                onDismiss = {
-                    showPicker = false
-                },
-                onDateSelected = {
-                    selectedDateOfTravel = it
-                }
-            )
-
-        }
-
     }
 
-
-    if (policySummary) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                scope.launch {
-                    sheetState.hide()
-                    policySummary = false
-                }
-            },
-            sheetState = sheetState,
-            shape = RoundedCornerShape(
-                topStart = 24.dp,
-                topEnd = 24.dp
-            )
-        ) {
-            PolicySummaryNominee(flightViewModel)
-        }
-
-    }
-
-    if (primumBreakup) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                scopePA.launch {
-                    sheetStatePA.hide()
-                    primumBreakup = false
-                }
-            },
-            sheetState = sheetStatePA,
-            shape = RoundedCornerShape(
-                topStart = 24.dp,
-                topEnd = 24.dp
-            )
-        ) {
-            PremiumSummaryNominee(flightViewModel)
-        }
-
-    }
 
 }
 
@@ -794,6 +906,7 @@ fun PremiumSummaryNominee(flightViewModel: FlightViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
+
 @Composable
 fun PolicySummaryNominee(flightViewModel: FlightViewModel) {
 

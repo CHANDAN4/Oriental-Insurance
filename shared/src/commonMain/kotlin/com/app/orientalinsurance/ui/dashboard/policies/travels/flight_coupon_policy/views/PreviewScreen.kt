@@ -1,19 +1,27 @@
 package com.app.orientalinsurance.ui.dashboard.policies.travels.flight_coupon_policy.views
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,8 +30,12 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -56,6 +68,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -93,6 +106,24 @@ fun PreviewScreen(flightViewModel: FlightViewModel, navController: NavHostContro
     var primumBreakup by remember { mutableStateOf(false) }
     val sheetStatePA = rememberModalBottomSheetState()
     val scopePA = rememberCoroutineScope()
+
+    // Test
+    var expandPlanDetails by remember { mutableStateOf(false) }
+    var expendAdditionalDetails by remember { mutableStateOf(false) }
+    var expendPersonalDetails by remember { mutableStateOf(false) }
+    var expandNomineeDetails by remember { mutableStateOf(false) }
+    var expendOfficeDetails by remember { mutableStateOf(false) }
+
+    // Policy Details
+    var expandedPolicy by remember { mutableStateOf(true) }
+    val policyDetailsHeaderList = mutableListOf<String>()
+    val policyDetailsList = mutableListOf<String>()
+
+    policyDetailsHeaderList.add("Policy Type ")
+    policyDetailsHeaderList.add("Policy Reference Number")
+
+    policyDetailsList.add("Flight Coupon Policy")
+    policyDetailsList.add("1278883993887376")
 
     when (val result = responseSaveData) {
 
@@ -259,288 +290,73 @@ fun PreviewScreen(flightViewModel: FlightViewModel, navController: NavHostContro
 
     ) { padding ->
 
-        Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2FF)).padding(padding)) {
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(
-                modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp),
-                text = "Preview",
-                fontFamily = mulishFontFamily(),
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left,
-                color = Color.Black,
-                fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.height(50.dp))
-
-            OutlinedTextField(
-                value = flightNo,
-                onValueChange = { flightNo = it },
-
+        Column(modifier = Modifier
+            .fillMaxSize().padding(padding)
+            .background(Color.White)
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp),
+                    .fillMaxHeight()
+                    .padding(8.dp)
+            ) {
+                LazyColumn {
+                    item {
 
-                // Hint
-                placeholder = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Flight No ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                // Floating label
-                label = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Flight No ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                singleLine = true,
-
-                shape = RoundedCornerShape(12.dp),
-
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Done
-                ),
-
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        // Handle Done
-                    }
-                ),
-
-                colors = OutlinedTextFieldDefaults.colors(
-
-                    // Background
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color(0xFFF5F5F5),
-
-                    // Border
-                    focusedBorderColor = Color(0xFFC85100),
-                    unfocusedBorderColor = Color.Gray,
-
-                    // Cursor
-                    cursorColor = Color(0xFFC85100),
-
-                    // Text
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-
-                    // Label
-                    focusedLabelColor = Color(0xFFC85100),
-                    unfocusedLabelColor = Color.Gray,
-
-                    // Placeholder
-                    focusedPlaceholderColor = Color.LightGray,
-                    unfocusedPlaceholderColor = Color.LightGray
-                )
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            OutlinedTextField(
-                value = airLineComp,
-                onValueChange = { airLineComp = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp),
-                // Hint
-                placeholder = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Airlines Company ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                // Floating label
-                label = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Airlines Company  ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                singleLine = true,
-
-                shape = RoundedCornerShape(12.dp),
-
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
-                ),
-
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        // Handle Done
-                    }
-                ),
-
-                colors = OutlinedTextFieldDefaults.colors(
-
-                    // Background
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color(0xFFF5F5F5),
-
-                    // Border
-                    focusedBorderColor = Color(0xFFC85100),
-                    unfocusedBorderColor = Color.Gray,
-
-                    // Cursor
-                    cursorColor = Color(0xFFC85100),
-
-                    // Text
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-
-                    // Label
-                    focusedLabelColor = Color(0xFFC85100),
-                    unfocusedLabelColor = Color.Gray,
-
-                    // Placeholder
-                    focusedPlaceholderColor = Color.LightGray,
-                    unfocusedPlaceholderColor = Color.LightGray
-                )
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            OutlinedTextField(
-                value = selectedDateOfTravel,
-                readOnly = true,
-                onValueChange = {
-                    //selectedDateOfTravel = it
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp),
-                // Hint
-                placeholder = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Date Of Travel ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-
-                // Floating label
-                label = {
-                    Text(
-                        buildAnnotatedString {
-                            append("Select Date Of Travel  ")
-                            withStyle(
-                                style = SpanStyle(color = Color.Red)
-                            ) {
-                                append("*")
-                            }
-                        },
-                        fontFamily = mulishFontFamily(),
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            showPicker = true
-                            // Open DatePicker here
+                        ExpandableList(
+                            flightViewModel = flightViewModel,
+                            header = "Policy Details",
+                            headerList = policyDetailsHeaderList,
+                            itemList = policyDetailsList,
+                            isExpanded = expandedPolicy
+                        ) {
+                            expandedPolicy = !expandedPolicy
                         }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Calendar",
-                            tint = Color.Gray
-                        )
+
+                        ExpandableList(
+                            flightViewModel = flightViewModel,
+                            header = "Plan Details",
+                            headerList = policyDetailsHeaderList,
+                            itemList = policyDetailsList,
+                            isExpanded = expandPlanDetails
+                        ) {
+                            expandPlanDetails = !expandPlanDetails
+                        }
+
+
+                        ExpandableList(
+                            flightViewModel = flightViewModel,
+                            header = "Additional Details",
+                            headerList = policyDetailsHeaderList,
+                            itemList = policyDetailsList,
+                            isExpanded = expendAdditionalDetails
+                        ) {
+                            expendAdditionalDetails = !expendAdditionalDetails
+                        }
+
+                        ExpandableList(
+                            flightViewModel = flightViewModel,
+                            header = "Personal Details",
+                            headerList = policyDetailsHeaderList,
+                            itemList = policyDetailsList,
+                            isExpanded = expendPersonalDetails
+                        ) {
+                            expendPersonalDetails = !expendPersonalDetails
+                        }
+
+                        ExpandableList(
+                            flightViewModel = flightViewModel,
+                            header = "Nominee Details",
+                            headerList = policyDetailsHeaderList,
+                            itemList = policyDetailsList,
+                            isExpanded = expandNomineeDetails
+                        ) {
+                            expandNomineeDetails = !expandNomineeDetails
+                        }
+
                     }
-                },
-
-                singleLine = true,
-
-                shape = RoundedCornerShape(12.dp),
-
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
-                ),
-
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        // Handle Done
-                    }
-                ),
-
-                colors = OutlinedTextFieldDefaults.colors(
-
-                    // Background
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color(0xFFF5F5F5),
-
-                    // Border
-                    focusedBorderColor = Color(0xFFC85100),
-                    unfocusedBorderColor = Color.Gray,
-
-                    // Cursor
-                    cursorColor = Color(0xFFC85100),
-
-                    // Text
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black,
-
-                    // Label
-                    focusedLabelColor = Color(0xFFC85100),
-                    unfocusedLabelColor = Color.Gray,
-
-                    // Placeholder
-                    focusedPlaceholderColor = Color.LightGray,
-                    unfocusedPlaceholderColor = Color.LightGray
-                )
-            )
-
-            ShowDatePicker(
-                show = showPicker,
-                onDismiss = {
-                    showPicker = false
-                },
-                onDateSelected = {
-                    selectedDateOfTravel = it
                 }
-            )
-
+            }
         }
 
     }
@@ -1103,6 +919,120 @@ fun PolicySummaryPreview(flightViewModel: FlightViewModel) {
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
+    }
+
+
+}
+
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ExpandableList(
+    flightViewModel: FlightViewModel?,
+    header: String,
+    headerList: List<String>,
+    itemList: List<Any?>,
+    isExpanded: Boolean,
+    onChange: () -> Unit
+) {
+    Column {
+        Card(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth()
+                .animateContentSize(), // This is where the magic happens!
+            onClick = {
+                onChange()
+            },
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = header,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                    val icon =
+                        if (isExpanded) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown
+                    Image(
+                        modifier = Modifier.size(32.dp),
+                        imageVector = icon,
+                        contentDescription = "",
+                    )
+                }
+                if (isExpanded) {
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        maxItemsInEachRow = 2
+                    ) {
+                        itemList.forEachIndexed { index, item ->
+                            if (headerList[index].isNotEmpty()) {
+                                if (item.toString().isNotEmpty()) {
+                                    Column(
+                                        modifier = Modifier
+                                            .weight(1f)   // each takes equal width
+                                            .fillMaxWidth(0.5f) // ensures 2 per row
+                                    ) {
+                                        Text(
+                                            text = headerList[index],
+                                            fontFamily = mulishFontFamily(),
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 16.sp,
+                                            maxLines = 3,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                        Text(
+                                            text = ""+item.toString(),
+                                            maxLines = 5,
+                                            fontFamily = mulishFontFamily(),
+                                            fontWeight = FontWeight.SemiBold,
+                                            overflow = TextOverflow.Ellipsis,
+                                            fontSize = 14.sp,
+                                        )
+                                    }
+                                } else {
+                                    Column(
+                                        modifier = Modifier
+                                            .weight(1f)   // each takes equal width
+                                            .fillMaxWidth(0.5f) // ensures 2 per row
+                                    ) {
+                                        Text(
+                                            text = headerList[index],
+                                            fontFamily = mulishFontFamily(),
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 16.sp,
+                                            maxLines = 3,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    }
+                                }
+
+                            } else {
+                                Spacer(modifier = Modifier.weight(1f)) // fill empty column
+                            }
+                        }
+                    }
+
+
+                }
+            }
+
+        }
     }
 
 

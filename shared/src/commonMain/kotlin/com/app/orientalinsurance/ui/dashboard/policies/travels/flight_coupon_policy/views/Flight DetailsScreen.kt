@@ -95,28 +95,6 @@ fun FlightDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
     val sheetStatePA = rememberModalBottomSheetState()
     val scopePA = rememberCoroutineScope()
 
-    when (val result = responseSaveData) {
-
-        is ApiState.Loading -> {
-
-        }
-
-        is ApiState.Success -> {
-            flightViewModel.flightNo=flightNo
-            flightViewModel.airlineCom=airLineComp
-            flightViewModel.flightSelDate=selectedDateOfTravel
-            navController.navigate(Dashboards.ProposerDetailsScreen.route)
-        }
-
-        is ApiState.Error -> {
-
-        }
-
-        is ApiState.Empty -> {
-
-        }
-
-    }
 
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -592,6 +570,28 @@ fun FlightDetailsScreen(flightViewModel: FlightViewModel, navController: NavHost
 
     }
 
+    when (val result = responseSaveData) {
+
+        is ApiState.Loading -> {
+
+        }
+
+        is ApiState.Success -> {
+            flightViewModel.flightNo=flightNo
+            flightViewModel.airlineCom=airLineComp
+            flightViewModel.flightSelDate=selectedDateOfTravel
+            navController.navigate(Dashboards.ProposerDetailsScreen.route)
+        }
+
+        is ApiState.Error -> {
+
+        }
+
+        is ApiState.Empty -> {
+
+        }
+
+    }
 
 }
 

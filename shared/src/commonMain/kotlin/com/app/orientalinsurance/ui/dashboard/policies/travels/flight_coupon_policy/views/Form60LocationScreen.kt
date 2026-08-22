@@ -641,7 +641,7 @@ fun Form60LocationDetailScreen(
             shape = RoundedCornerShape(12.dp),
 
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
+                keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             ),
 

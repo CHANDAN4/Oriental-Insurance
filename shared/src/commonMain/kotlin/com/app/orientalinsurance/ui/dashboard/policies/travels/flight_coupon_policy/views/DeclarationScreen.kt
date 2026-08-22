@@ -238,7 +238,7 @@ fun DeclarationScreen(
     ) { padding ->
 
 
-        Column(modifier = Modifier.fillMaxSize().background(Color.Blue)) {
+        Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
 
             Column(
                 modifier = Modifier

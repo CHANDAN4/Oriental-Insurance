@@ -93,6 +93,10 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
     var otherIncome : String?=null
     var aadharNo : String?=null
 
+    //Nominee Details
+    var selectedGender : String?=null
+
+
 
 
     private val responseBasicDetails_ = MutableStateFlow<ApiState<ResponseBasicDetails>>(ApiState.Empty)
@@ -172,13 +176,13 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
 
 
 
-    private val responseSaveData_ = MutableStateFlow<ApiState<ResponseSaveData>>(ApiState.Loading)
+    private val responseSaveData_ = MutableStateFlow<ApiState<ResponseSaveData>>(ApiState.Empty)
 
     val responseSaveData: StateFlow<ApiState<ResponseSaveData>> = responseSaveData_
 
 
     fun saveData(requestLogin: RequestSaveDate, id: String?) {
-
+        responseSaveData_.value= ApiState.Loading
         viewModelScope.launch {
             repo?.saveData(requestLogin,id)
                 ?.catch { e ->
@@ -193,13 +197,13 @@ class FlightViewModel(val repo: FlightRepository, val settingsManager: SettingsM
 
 
 
-    private val responseAdditionalDetails_ = MutableStateFlow<ApiState<ResponseAdditionalDetails>>(ApiState.Loading)
+    private val responseAdditionalDetails_ = MutableStateFlow<ApiState<ResponseAdditionalDetails>>(ApiState.Empty)
 
     val responseAdditionalDetails: StateFlow<ApiState<ResponseAdditionalDetails>> = responseAdditionalDetails_
 
 
     fun additionalDetails(requestLogin: RequestProposalAdditionalDetails, id: String?) {
-
+        responseAdditionalDetails_.value= ApiState.Loading
         viewModelScope.launch {
             repo?.additionalDetails(requestLogin,id)
                 ?.catch { e ->
